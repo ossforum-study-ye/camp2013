@@ -1,0 +1,106 @@
+.. nii-chef-training documentation master file, created by
+   sphinx-quickstart on Thu Oct 11 00:09:28 2012.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+
+Opscode Hosted Chef ハンズオン
+========================================
+
+はじめに
+--------------------
+
+このドキュメントは、Hosted Chef Server(Opsocde Chef SaaS)とknife pluginを利用し、パブリッククラウドにインスタンスの起動し、Chef Server管理下への登録し、Cookbook & Recipeにて管理する基本的な手順を説明したものです。
+
+研修について
+=======================
+
+.. toctree::
+   :maxdepth: 1
+
+   about_training/time_place.rst
+   about_training/instructor.rst
+   about_training/objectives.rst
+   about_training/howcanilearn.rst
+   
+Agenda
+=======================
+
+.. toctree::
+   :maxdepth: 1
+  
+   about_training/agenda.rst
+
+
+Server Configuration Toolの必要性
+==============================================
+
+.. toctree::
+   :maxdepth: 1
+
+   needs_server_config/inside_auto.rst
+   needs_server_config/virtual.rst
+   needs_server_config/survive.rst
+   needs_server_config/as_code.rst
+
+
+Opscode Chefについて
+==============================================
+.. toctree::
+   :maxdepth: 1
+
+   chef101/architect.rst
+   chef101/advantage.rst
+   chef101/chef_terms.rst   
+   chef101/so_what_is_chef.rst
+
+
+ハンズオン
+==============================================
+
+.. toctree::
+   :maxdepth: 1
+
+   hosted_chef_register/index.rst
+   workstation_install/index.rst
+   knife_euca/index.rst
+   node_controle/index.rst
+   recipe101/recipe.rst
+   recipe101/motd.rst
+   search_attributes/attribute.rst
+   search_attributes/data_bag.rst
+   wordpress_install/index.rst
+
+まとめ
+==============================================
+
+本日はありがとうございました。
+機会がありましたら、是非Chefを試してみてください。
+
+
+Q＆A
+==============================================
+
+何でもどうぞ！　;)
+
+
+資料作成責任者
+============================================
+
+| 堀田直孝
+| 上級コンサルタント
+| クリエーションライン株式会社(CREATIONLINE,Inc.)
+| 東京都千代田区神田佐久間町3-6 M's WORKS BLDG 2F
+| 電話番号  03-5829-8355
+| email j-hotta@creationline.com
+
+.. image:: _static/bioremamagao_180.jpg
+   :alt: @jhotta
+
+
+注意書き
+-----------------
+
+ハンズオン実施にあたり手順の検証は行っておりますが、全ての動作を保証するものではありません。ドキュメント内で紹介しているコマンドや各構成要素の仕様変更は、Opscode wikiのドキュメントを参考に、常に最新情報に読み替えてください。
+
+またハンズオン参加者が、本ドキュメントに従って操作をしたことにより不利益／損害等にあったとしても、Japan Chef User Groupは一切保証しません。各参加者の責任において、パブリッククラウド及びChefの操作を実行してください。

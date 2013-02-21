@@ -1,0 +1,143 @@
+Starting Chef Client, version 10.18.2
+resolving cookbooks for run list: ["riak"]
+Synchronizing Cookbooks:
+  - riak
+Compiling Cookbooks...
+Converging 8 resources
+Recipe: riak::default
+  * group[riak] action create
+    - Would create group[riak]
+  * user[riak] action create
+    - Would create user user[riak]
+  * remote_file[/var/chef/cache/riak-1.2.1-1.el5.x86_64.rpm] action create
+    - Would copy file downloaded from http://s3.amazonaws.com/downloads.basho.com/riak/1.2/1.2.1/rhel/5/riak-1.2.1-1.el5.x86_64.rpm into /var/chef/cache/riak-1.2.1-1.el5.x86_64.rpm
+        (file sizes exceed 10000000 bytes, diff output suppressed)
+    - Would change mode from '' to '0644'
+    - Would change owner from '' to 'root'
+  * package[riak-1.2.1-1.el5.x86_64.rpm] action install
+    * Package riak-1.2.1-1.el5.x86_64.rpm not found: /var/chef/cache/riak-1.2.1-1.el5.x86_64.rpm
+    * Assuming package riak-1.2.1-1.el5.x86_64.rpm would have been made available.
+    * Unable to determine current version due to RPM failure. Detail: nil
+    * Assuming current version would have been determined for packageriak-1.2.1-1.el5.x86_64.rpm.
+    * No version specified, and no candidate version available for riak-1.2.1-1.el5.x86_64.rpm
+    * Assuming a repository that offers riak-1.2.1-1.el5.x86_64.rpm would have been configured
+    - Would install  package riak-1.2.1-1.el5.x86_64.rpm
+  * directory[/etc/riak] action create
+    - Would create new directory /etc/riak
+    - Would change mode from '' to '0755'
+    - Would change owner from '' to 'root'
+  * file[/etc/riak/app.config] action create
+    * Parent directory /etc/riak does not exist.
+    * Assuming directory /etc/riak would have been created
+    - Would create new file /etc/riak/app.config with content checksum 907fca
+        --- /tmp/chef-tempfile20130129-9678-159m831-0	2013-01-29 13:35:20.000000000 +0900
+        +++ /tmp/chef-diff20130129-9678-jgsno0-0	2013-01-29 13:35:20.000000000 +0900
+        @@ -0,0 +1,84 @@
+        +[
+        +	{bitcask, [
+        +		{data_root, "/var/lib/riak/bitcask"}
+        +	]},
+        +	{kernel, [
+        +		{inet_dist_listen_max, 7999},
+        +		{inet_dist_listen_min, 6000}
+        +	]},
+        +	{lager, [
+        +		{crash_log, "/var/log/riak/crash.log"},
+        +		{crash_log_count, 5},
+        +		{crash_log_date, "$D0"},
+        +		{crash_log_msg_size, 65536},
+        +		{crash_log_size, 10485760},
+        +		{error_logger_redirect, true},
+        +		{handlers, [
+        +			{lager_file_backend, [
+        +				{"/var/log/riak/error.log", error, 10485760, "$D0", 5},
+        +				{"/var/log/riak/console.log", info, 10485760, "$D0", 5}
+        +			]}
+        +		]}
+        +	]},
+        +	{merge_index, [
+        +		{buffer_rollover_size, 1048576},
+        +		{data_root, "/var/lib/riak/merge_index"},
+        +		{max_compact_segments, 20}
+        +	]},
+        +	{riak_api, [
+        +		{pb_ip, "10.3.2.73"},
+        +		{pb_port, 8087}
+        +	]},
+        +	{riak_control, [
+        +		{admin, true},
+        +		{auth, userlist},
+        +		{enabled, false},
+        +		{userlist, [
+        +			{"user", "pass"}
+        +		]}
+        +	]},
+        +	{riak_core, [
+        +		{dtrace_support, false},
+        +		{handoff_port, 8099},
+        +		{http, [
+        +			{"10.3.2.73", 8098}
+        +		]},
+        +		{platform_bin_dir, "/usr/sbin"},
+        +		{platform_data_dir, "/var/lib/riak"},
+        +		{platform_etc_dir, "/etc/riak"},
+        +		{platform_lib_dir, "/usr/lib64/riak"},
+        +		{platform_log_dir, "/var/log/riak"},
+        +		{ring_creation_size, 64},
+        +		{ring_state_dir, "/var/lib/riak/ring"}
+        +	]},
+        +	{riak_kv, [
+        +		{hook_js_vm_count, 2},
+        +		{http_url_encoding, on},
+        +		{js_max_vm_mem, 8},
+        +		{js_thread_stack, 16},
+        +		{legacy_keylisting, false},
+        +		{listkeys_backpressure, true},
+        +		{map_js_vm_count, 8},
+        +		{mapred_2i_pipe, true},
+        +		{mapred_name, "mapred"},
+        +		{mapred_system, pipe},
+        +		{reduce_js_vm_count, 6},
+        +		{storage_backend, riak_kv_bitcask_backend},
+        +		{vnode_vclocks, true}
+        +	]},
+        +	{riak_search, [
+        +		{enabled, false}
+        +	]},
+        +	{riak_sysmon, [
+        +		{busy_dist_port, true},
+        +		{busy_port, true},
+        +		{gc_ms_limit, 100},
+        +		{heap_word_limit, 40111000},
+        +		{port_limit, 2},
+        +		{process_limit, 30}
+        +	]},
+        +	{sasl, [
+        +		{sasl_error_logger, false},
+        +		{utc_log, true}
+        +	]}
+        +].
+  * file[/etc/riak/vm.args] action create
+    * Parent directory /etc/riak does not exist.
+    * Assuming directory /etc/riak would have been created
+    - Would create new file /etc/riak/vm.args with content checksum 7fc7ce
+        --- /tmp/chef-tempfile20130129-9678-18d30mj-0	2013-01-29 13:35:20.000000000 +0900
+        +++ /tmp/chef-diff20130129-9678-t0jzu8-0	2013-01-29 13:35:20.000000000 +0900
+        @@ -0,0 +1,8 @@
+        ++A 64
+        ++K true
+        ++W w
+        +-env ERL_CRASH_DUMP /var/log/riak/erl_crash.dump
+        +-env ERL_FULLSWEEP_AFTER 0
+        +-env ERL_MAX_PORTS 4096
+        +-name riak@10.3.2.73
+        +-setcookie riak
+  * service[riak] action enable
+    * service[riak]: unable to locate the init.d script!
+    * Assuming service would be disabled. The init script is not presently installed.
+    - Would enable service service[riak]
+  * service[riak] action restart
+    * service[riak]: unable to locate the init.d script!
+    * Assuming service would be disabled. The init script is not presently installed.
+    - Would restart service service[riak]
+Chef Client finished, 9 resources would have been updated

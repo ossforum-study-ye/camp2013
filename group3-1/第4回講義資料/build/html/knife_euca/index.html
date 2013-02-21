@@ -1,0 +1,184 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>knife-eucaのインストールと設定 &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="../index.html" />
+    <link rel="next" title="Chef Nodeを操作" href="../node_controle/index.html" />
+    <link rel="prev" title="Workstationの設定" href="../workstation_install/index.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>knife-eucaのインストールと設定</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="../workstation_install/index.html">Workstationの設定</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../node_controle/index.html">Chef Nodeを操作</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="knife-euca">
+<h1>knife-eucaのインストールと設定<a class="headerlink" href="#knife-euca" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="gemknife-euca">
+<h2>gemを使って、knife-eucaをインストール<a class="headerlink" href="#gemknife-euca" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">Omnibus Installerを使ったChefのインストールでは、全てのスクリプトは /opt/chef 以下に配置されます。</p>
+</div>
+</div></blockquote>
+<p>Rubyのgem形式で配布されている、knifeの拡張プラグインをコンパイルするためのヘッダーファイルとビルド環境をインストールします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> sudo apt-get install libxml2-dev libxslt-dev build-essential
+</pre></div>
+</div>
+</div></blockquote>
+<p>準備が整ったら、/opt/chef/embedded/bin/gem を使って、プラグインをインストールします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> sudo /opt/chef/embedded/bin/gem install knife-eucalyptus <span class="se">\</span>
+<span class="go">       --no-ri \</span>
+<span class="go">       --no-rdoc</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>下記のようなコメントが出力されれば、インストールは完了です。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="go">Gem files will remain installed in /opt/chef/embedded/lib/ruby/gems/1.9.1/gems/nokogiri-1.5.5 for inspection.</span>
+<span class="go">Results logged to /opt/chef/embedded/lib/ruby/gems/1.9.1/gems/nokogiri-1.5.5/ext/nokogiri/gem_make.out</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="knife-rb">
+<h2>クラウドを使うための設定をknife.rbに追記<a class="headerlink" href="#knife-rb" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p>クラウドクライアントの[設定]&gt;[クラウドクライアント]を選択し、情報を確認してください。</p>
+<a class="last reference internal image-reference" href="../_images/nii_euca_credential.png"><img alt="../_images/nii_euca_credential.png" src="../_images/nii_euca_credential.png" style="width: 600.0px;" /></a>
+</div>
+</div></blockquote>
+<p>Workstationにsshでアクセスし、knife.rbを編集します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> ssh root@<span class="o">[</span>workstationのインスタンスIP<span class="o">]</span>
+<span class="gp">$</span> vi chef-repo/.chef/knife.rb
+</pre></div>
+</div>
+</div></blockquote>
+<p>3項目を追記します。</p>
+<blockquote>
+<div><div class="code highlight-python"><div class="highlight"><pre><span class="c"># for NII Eucalyptus</span>
+
+<span class="n">knife</span><span class="p">[:</span><span class="n">euca_access_key_id</span><span class="p">]</span>     <span class="o">=</span> <span class="s">&quot;r4avKouyWjjYAIwcMmJLHw&quot;</span>
+
+<span class="n">knife</span><span class="p">[:</span><span class="n">euca_secret_access_key</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;CxyNF79TGtGrxJ3jxgKES0MDmuyEK5FTrVLDzA&quot;</span>
+
+<span class="n">knife</span><span class="p">[:</span><span class="n">euca_api_endpoint</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;http://vclc0013.ecloud.nii.ac.jp:8773/services/Eucalyptus&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<div class="last line-block">
+<div class="line">クラウドクライントから下記うつ際の注意点！</div>
+<div class="line"><a class="reference external" href="https://">https://</a>   &#8211;&gt;  <a class="reference external" href="http://">http://</a> (オレオレ認証証明書への対策)</div>
+<div class="line">RDHC       &#8211;&gt;  Eucalyptus (独自認証用のサイトをバイパスする対策)</div>
+</div>
+</div>
+</div></blockquote>
+<p>knife-eucalyptusが正しく設定できているか確認してみます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> ssh root@<span class="o">[</span>workstationのインスタンスIP<span class="o">]</span>
+<span class="gp">$</span> <span class="nb">cd</span> ~/chef-repo
+<span class="gp">$</span> knife euca flavor list
+<span class="gp">$</span> knife euca server list
+</pre></div>
+</div>
+</div></blockquote>
+<p>Workstationとして起動したインスタンス情報が表示されれば設定は完了しています。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">ubuntu@localhost:~/chef-repo$</span> knife euca flavor list
+<span class="go">ID           Architecture  RAM         Disk     Cores</span>
+<span class="go">c1.medium    32-bit        1740.8 MB   350 GB   5</span>
+<span class="go">c1.xlarge    64-bit        7168 MB     1690 GB  20</span>
+<span class="go">cc1.4xlarge  64-bit        23552 MB    1690 GB  33.5</span>
+<span class="go">cc2.8xlarge  64-bit        61952 MB    3370 GB  88</span>
+<span class="go">cg1.4xlarge  64-bit        22528 MB    1690 GB  33.5</span>
+<span class="go">hi1.4xlarge  64-bit        61952 MB    2048 GB  35</span>
+<span class="go">m1.large     64-bit        7680 MB     850 GB   4</span>
+<span class="go">m1.medium    32-bit        3750 MB     400 GB   2</span>
+<span class="go">m1.small     32-bit        1740.8 MB   160 GB   1</span>
+<span class="go">m1.xlarge    64-bit        15360 MB    1690 GB  8</span>
+<span class="go">m2.2xlarge   64-bit        35020.8 MB  850 GB   13</span>
+<span class="go">m2.4xlarge   64-bit        70041.6 MB  1690 GB  26</span>
+<span class="go">m2.xlarge    64-bit        17510.4 MB  420 GB   6.5</span>
+<span class="go">t1.micro     0-bit         613 MB      0 GB     2</span>
+<span class="gp">ubuntu@localhost:~/chef-repo$</span>
+</pre></div>
+</div>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">ubuntu@localhost:~/chef-repo$</span> knife euca server list
+<span class="go">Instance ID  Public DNS Name  Flavor     Image         Security Groups  State</span>
+<span class="go">i-458D07D3   157.1.150.10     c1.medium  emi-19F41435                   running</span>
+<span class="go">i-31BE06D9   157.1.150.14     c1.medium  emi-1D58145A                   running</span>
+<span class="go">i-40BA07A6   157.1.150.13     c1.medium  emi-1C55144B                   running</span>
+<span class="go">i-392407BF   157.1.150.11     m1.xlarge  emi-1C55144B                   running</span>
+<span class="go">i-4028086C   157.1.150.15     c1.medium  emi-1C55144B                   running</span>
+<span class="gp">ubuntu@localhost:~/chef-repo$</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="../workstation_install/index.html">Workstationの設定</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../node_controle/index.html">Chef Nodeを操作</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

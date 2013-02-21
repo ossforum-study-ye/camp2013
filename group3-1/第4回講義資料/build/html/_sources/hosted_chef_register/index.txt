@@ -1,0 +1,76 @@
+Hosted Chef Serverへのユーザー登録
+===========================================
+
+  以降の手順に基づいて、下記のファイルを取得します。
+  
+  * Chef serverへの **認証ファイル** (pemファイル 2種類)
+  * knifeを使うための **環境設定ファイル** (knife.rb)
+  
+
+Hosted Chefを利用するユーザーを登録
+------------------------------------------------
+
+  .. note ::
+
+    `Hosted Chef`_ Sign UP `Opscode`_ サイトの一番上の分の黒い帯の中にあります。
+
+Opscodeのサイトから `Hosted Chef`_ のユーザー登録画面にたどり着くには複数の方法がありますが、下記のページから登録を開始できます。
+
+  .. image:: 
+    ../_static/hosted_chef_free.png
+    :width: 860
+    :scale: 100
+
+"About you"の部分に必要事項を記入して、 **agree** にチェックマークを入れ、"Next>"をクリックします。
+
+  .. image:: 
+    ../_static/hosted_chef_free2.png
+    :width: 860
+    :scale: 100
+
+
+Hosted Chef Serverに登録したユーザー認証用のpemファイルを取得
+-----------------------------------------------------------------------
+
+    .. image::
+      ../_static/hosted_chef_free3.png
+      :width: 860
+      :scale: 100
+
+  .. note ::
+
+    画面右上の黒い帯の中の **”logged in as: ○○”** と表示されている部分をクリックしAccount Management画面が表示されたら、 **"Change Password"** をクリックします。
+
+
+  .. note ::
+
+    **上記のタイミングでpem ファイルを取得できなかった場合は、下記の手順で新しくpemファイルをジェネレートします。**
+
+      .. image::
+        ../_static/user_pem_regen.jpg
+        :width: 600
+        :scale: 100
+
+
+
+Organization(組織)の認証用のpemファイルとknifeの環境設定用ファイルを取得
+--------------------------------------------------------------------------
+
+  右上のOrganization(組織)をクリックします。その後、赤枠の部分にある項目をクリックしファイルをダウンロードします。
+
+  * Regenerate validation key
+  * Generate knife config
+
+
+  .. image::
+    ../_static/hosted_chef_free4.png
+    :width: 860
+    :scale: 100
+
+
+
+
+
+
+.. _Hosted Chef: http://www.opscode.com/hosted-chef/
+.. _Opscode: http://www.opscode.com/

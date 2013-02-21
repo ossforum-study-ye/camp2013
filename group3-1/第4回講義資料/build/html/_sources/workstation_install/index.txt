@@ -1,0 +1,199 @@
+Workstationの設定
+============================================= 
+
+  .. warning::
+
+    使用するソフトウェアの操作方法に置き換えて作業を進めてください。
+    sshに関しては、tera term
+    scpに関しては、win scp
+
+
+起動したインスタンスにsshで接続
+----------------------------------------------
+
+クライアントソフトから、先に起動したインスタンスのIPアドレスを確認しておきます。
+
+  .. note::
+
+    * security groupは、ossforum-chefを利用します。
+
+確認したIPアドレスに対し、sshで接続します。Unix系のOSの場合、下記のようになります。
+
+  .. code-block:: console
+
+    $ ssh ubuntu@[インスタンスIP]
+
+  .. note::
+
+    passwordは、 ossforum に設定されています。　
+
+
+下記のような内容が表示されるはずです。
+
+  .. code-block:: console
+    
+    Welcome to Ubuntu 12.04.1 LTS (GNU/Linux 3.2.0-32-virtual x86_64)
+
+     * Documentation:  https://help.ubuntu.com/
+
+      System information as of Tue Oct 23 03:28:23 UTC 2012
+
+      System load:  0.0               Processes:           59
+      Usage of /:   10.5% of 7.87GB   Users logged in:     0
+      Memory usage: 3%                IP address for eth0: 10.162.15.62
+      Swap usage:   0%
+
+      Graph this data and manage this system at https://landscape.canonical.com/
+   
+    0 packages can be updated.
+    0 updates are security updates.
+
+    Get cloud support with Ubuntu Advantage Cloud Guest
+      http://www.ubuntu.com/business/services/cloud
+
+
+Chef関連のソフトウェアをOmnibus installerでインストール
+--------------------------------------------------------------
+
+  .. code-block:: console
+
+    $ curl -L http://www.opscode.com/chef/install.sh | sudo bash
+
+下記のような出力が出れば、インストール完了です。
+
+  .. code-block:: console
+
+    Setting up chef (10.16.0-1.ubuntu.11.04) ...
+    Thank you for installing Chef!
+
+|
+
+  .. note::
+
+    - `Omnibus Installer`_ では、Ubuntu以外のOSにもインストールすることができます。
+    - Ominubus Installer でインストールした場合は、Chef関連の全てのソフトウェアは/opt/chefにまとめてインストールされます。
+    - Chef関連のソフトウェアが不要になった場合、/opt/chef以下を削除してください。
+
+
+Chef操作のために必要なファイルを保存しておくディレクトリを作成
+-------------------------------------------------------------------
+
+  .. note::
+
+    既にgitがインストールされているインスタンスを利用する場合は、下記のapt-getによるgitのインストールは不要です。不明の場合、そのまま実行しても問題ありません。
+
+    .. code-block:: console
+
+      $ sudo apt-get install git-core
+
+|
+
+  .. code-block:: console
+
+    $ sudo apt-get install git-core
+    $ git clone https://github.com/opscode/chef-repo.git
+
+下記のように、ファイル構成のクローニングできれば完成です。
+
+  .. code-block:: console
+
+    Cloning into 'chef-repo'...
+    remote: Counting objects: 199, done.
+    remote: Compressing objects: 100% (117/117), done.
+    remote: Total 199 (delta 72), reused 160 (delta 49)
+    Receiving objects: 100% (199/199), 30.34 KiB, done.
+    Resolving deltas: 100% (72/72), done.
+
+下記のようなディレクトリが存在していることを確認してください。
+
+  .. code-block:: console
+
+    .
+    +-- chef-repo
+        +-- certificates
+        │   +-- README.md
+        +-- chefignore
+        +-- config
+        │   +-- rake.rb
+        +-- cookbooks
+        │   +-- README.md
+        +-- data_bags
+        │   +-- README.md
+        +-- environments
+        |   +-- README.md
+        +-- Rakefile
+        +-- README.md
+        +-- roles
+            +-- README.md
+
+
+Chef ServerにWorkstationとして登録するために必要なファイルを設置するディレクトリを作成
+-----------------------------------------------------------------------------------------
+
+  .. code-block:: console
+
+    $ cd chef-repo
+    $ mkdir .chef
+
+ここまできたら、EC2のインスタンスからログアウトします。
+
+  .. code-block:: console
+
+    $ exit
+
+
+インスタンスに対してWorkstationとして必要なファイルを転送
+------------------------------------------------------------------------
+
+  Hosted Chefのユーザー登録時に取得した、認証用pemファイルとknifeの環境設定ファイルをインスタンスに転送します。
+
+  - ユーザーの認証用pemファイル
+  - Organization(組織)の認証用pemファイル
+  - Organization(組織)のknife.rb
+
+|
+
+  .. code-block:: console
+
+    $ scp -i hosted_chef_user.pem \
+             ubuntu@[インスタンスIPアドレス]:chef-repo/.chef/
+
+    $ scp -i organization-validator.pem \
+             ubuntu@[インスタンスIPアドレス]:chef-repo/.chef/
+
+    $ scp -i knife.rb \
+             ubuntu@[インスタンスIPアドレス]:chef-repo/.chef/
+
+
+  .. note::
+
+    winscpを利用して、同様の内容を得るための操作をしてください。
+
+
+Workstationとして動作しているかどうか確認します。先ほどと同じようにsshでインスタンスにアクセスして下記のコマンドを実行します。
+
+  .. code-block:: console
+
+    $ cd chef-repo
+    $ knife client list
+
+knife.rbのファイルに記載されている"validation_client_name"の値が表示されていることを確認します。
+
+
+Site専用のcookbooksの設置ディレクトリの設定
+---------------------------------------------------
+
+Workstationにsshでアクセスし、knife.rbを編集します。
+
+  .. code-block:: console
+
+     $ ssh root@[workstationのインスタンスIP]
+     $ vi ~/chef-repo/.chef/knife.rb
+
+cookbook_pathにsite専用のcookbookの設置場所を追記します。
+   
+  .. code::
+
+    cookbook_path ["#{current_dir}/../cookbooks", "#{current_dir}/../site-cookbooks"]
+ 
+.. _Omnibus Installer:  http://www.opscode.com/chef/install/

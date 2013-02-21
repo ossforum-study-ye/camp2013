@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>重要コンセプトと単語 &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="../index.html" />
+    <link rel="next" title="それで！ Chefを一言で？！" href="so_what_is_chef.html" />
+    <link rel="prev" title="Chefの利用メリット" href="advantage.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>重要コンセプトと単語</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="advantage.html">Chefの利用メリット</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="so_what_is_chef.html">それで！ Chefを一言で？！</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="id1">
+<h1>重要コンセプトと単語<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>　重要コンセプト：</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://ja.wikipedia.org/wiki/%E5%86%AA%E4%B9%97">べき等性</a></li>
+<li>大雑把に言って、ある操作を1回行っても複数回行っても結果が同じという概念</li>
+</ul>
+<img alt="../_images/idempotent.jpg" src="../_images/idempotent.jpg" style="width: 860px;" />
+<p>「注文したBeerが未だ届いていません」と店員さんに伝えた直後に、伝えた店員によってBeerが１杯届き。更に、しばらくすると別の店員がBeerをもう１杯持ってくる。 <strong>こんな店には、べき等性がない。</strong></p>
+</div></blockquote>
+<div class="section" id="id2">
+<h2>全体像<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/overview_chef_draft.png"><img alt="../_images/overview_chef_draft.png" src="../_images/overview_chef_draft.png" /></a>
+</div></blockquote>
+</div>
+<div class="section" id="recipe">
+<h2><a class="reference external" href="http://wiki.opscode.com/display/chef/Recipes">Recipe</a><a class="headerlink" href="#recipe" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>実際の設定手順が記載されたファイル</li>
+<li>このファイルに記述された順番通りに実行される</li>
+<li>Rubyのinternal DSLで記述されている</li>
+<li>Rubyシンタックスで記述されている</li>
+<li>このrecipeは他のrecipeから参照できる</li>
+<li>node.objectを通して、設定ターゲットnodeのattribues(情報)を読み込むことができる</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="resource">
+<h2><a class="reference external" href="http://wiki.opscode.com/display/chef/Resources">Resource</a><a class="headerlink" href="#resource" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Chefのアクションを実行するユニット</li>
+</ul>
+<div class="highlight-ruby"><div class="highlight"><pre><span class="n">package</span> <span class="s2">&quot;debian-archive-keyring&quot;</span> <span class="k">do</span>
+  <span class="n">action</span> <span class="ss">:install</span>
+  <span class="n">options</span> <span class="s2">&quot;--force-yes&quot;</span>
+<span class="k">end</span>
+
+<span class="n">cookbook_file</span> <span class="s2">&quot;/tmp/testfile&quot;</span> <span class="k">do</span>
+  <span class="n">source</span> <span class="s2">&quot;testfile&quot;</span> <span class="c1"># this is the value that would be inferred from the path parameter</span>
+  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<ul>
+<li><p class="first">nodeの状態が別々にテストされ、アクションが実行される単位</p>
+</li>
+<li><p class="first">resourceに含まれる項目</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><p class="first last"><strong>Cookbook File</strong></p>
+</td>
+<td><p class="first last">Cron</p>
+</td>
+<td><p class="first last">Deploy</p>
+</td>
+<td><p class="first last">Directory</p>
+</td>
+<td><p class="first last">Env</p>
+</td>
+<td><p class="first last">Erlang Call</p>
+</td>
+<td><p class="first last"><strong>Execute</strong></p>
+</td>
+</tr>
+<tr class="row-even"><td><p class="first last">File</p>
+</td>
+<td><p class="first last">Git</p>
+</td>
+<td><p class="first last">Group</p>
+</td>
+<td><p class="first last">HTTP Request</p>
+</td>
+<td><p class="first last">Ifconfig</p>
+</td>
+<td><p class="first last">Link</p>
+</td>
+<td><p class="first last">Log</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p class="first last">Mdadm</p>
+</td>
+<td><p class="first last">Mount</p>
+</td>
+<td><p class="first last">Ohai</p>
+</td>
+<td><p class="first last"><strong>Package</strong></p>
+</td>
+<td><p class="first last">PowerShell Script</p>
+</td>
+<td><p class="first last">Remote Directory</p>
+</td>
+<td><p class="first last">Remote File</p>
+</td>
+</tr>
+<tr class="row-even"><td><p class="first last">Route</p>
+</td>
+<td><p class="first last">Ruby Block</p>
+</td>
+<td><p class="first last">SCM</p>
+</td>
+<td><p class="first last">Script</p>
+</td>
+<td><p class="first last">Service</p>
+</td>
+<td><p class="first last">Subversion</p>
+</td>
+<td><p class="first last"><strong>Template</strong></p>
+</td>
+</tr>
+<tr class="row-odd"><td><p class="first last">User</p>
+</td>
+<td><p class="first last">Opscode Cookbook LWRPs</p>
+</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="cookbook">
+<h2><a class="reference external" href="http://wiki.opscode.com/display/chef/Cookbooks">Cookbook</a><a class="headerlink" href="#cookbook" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>recipe をパッケージ化したもので、apache2のように複数のrecipeを含む場合もある</li>
+<li>一般的に一つのソフト(apache,mysql等)や一つの機能をパッケージ化している</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="roles">
+<h2><a class="reference external" href="http://wiki.opscode.com/display/chef/Roles">Roles</a><a class="headerlink" href="#roles" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Nodeを設定する際に、類似している要素(feature)のグループ</li>
+<li>Roleは、cookbookやrecipeとAttributeの集合</li>
+<li>Nodeは複数のRoleを持つことができる</li>
+<li>Chef-clientの実行時に複数のRoleとrecipeは展開され、一つのrun_listにマージされる</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="run-list">
+<h2><a class="reference external" href="http://wiki.opscode.com/display/chef/Setting+the+run_list+in+JSON+during+run+time">Run List</a><a class="headerlink" href="#run-list" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Nodeで実行されるrecipeのリスト</li>
+<li>knife, Role, 等の場所で設定することができる</li>
+</ul>
+<div class="highlight-ruby"><div class="highlight"><pre><span class="n">run_list</span> <span class="s2">&quot;recipe[apache2]&quot;</span><span class="p">,</span> <span class="s2">&quot;recipe[apache2::mod_ssl]&quot;</span><span class="p">,</span> <span class="s2">&quot;role[monitor]&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="attribute">
+<h2><a class="reference external" href="http://wiki.opscode.com/display/chef/Attributes">Attribute</a><a class="headerlink" href="#attribute" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Chef Serverの保存されたNodeを設定するための変数data</li>
+<li>Chef Server上で検索できる</li>
+<li>Chef Serverを使ったNodeの運用時には、状況に応じて動的に変更できる</li>
+</ul>
+</div></blockquote>
+<p>attributeをcookbookの中で設定する場合は、cookbookディレクトリの中にattributeというディレクトリを作成し、値を記述したファイルを作成する。</p>
+<blockquote>
+<div><p>例としてcookbooks/apache2/attributes/default.rb に下記のようなattributeを設定し、それをhttp.confを生成するためのtemplateと合成し、状況に応じて最終設定ファイルを出力する。</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">default</span><span class="p">[</span><span class="s">&quot;apache&quot;</span><span class="p">][</span><span class="s">&quot;dir&quot;</span><span class="p">]</span>          <span class="o">=</span> <span class="s">&quot;/etc/apache2&quot;</span>
+<span class="n">default</span><span class="p">[</span><span class="s">&quot;apache&quot;</span><span class="p">][</span><span class="s">&quot;listen_ports&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&quot;80&quot;</span><span class="p">,</span><span class="s">&quot;443&quot;</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Ohaiにより自動収集されるattribute:</p>
+<blockquote>
+<div><ul class="simple">
+<li>IP address</li>
+<li>hostname</li>
+<li>CPU, HDD, memory, partion</li>
+<li>インストールしたkernel modules</li>
+<li>導入されてプログラミング言語, version</li>
+<li>その他、大量の情報</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="node-object">
+<h2><a class="reference external" href="http://wiki.opscode.com/display/chef/Recipes#Recipes-NodeObject">Node Object</a><a class="headerlink" href="#node-object" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Chef Serverに保存されている、各Nodeに関連する情報レコード</li>
+<li>それぞれのnodeに関わる情報は、node.objectを介して参照することができる</li>
+<li>node.objectに含まれる項目を、Attributeと呼ぶ</li>
+<li>このAttributeの参照とテンプレートへの書き込みが、Chefの柔軟な設定能力を強化している</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="node">
+<h2><a class="reference external" href="http://wiki.opscode.com/display/chef/Nodes">Node</a><a class="headerlink" href="#node" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Chef Clientが実行されている場所</li>
+<li>Attributeとrun listという要素を保持したレコード行</li>
+<li>Recipesと [Roles] を適用する先</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="advantage.html">Chefの利用メリット</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="so_what_is_chef.html">それで！ Chefを一言で？！</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

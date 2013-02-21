@@ -1,0 +1,211 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>recipeでmotdを操作してみる &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="../index.html" />
+    <link rel="next" title="Attributesの検索の結果をmotdに反映するrecipeの作成" href="../search_attributes/attribute.html" />
+    <link rel="prev" title="recipeの基本" href="recipe.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>recipeでmotdを操作してみる</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="recipe.html">recipeの基本</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../search_attributes/attribute.html">Attributesの検索の結果をmotdに反映するrecipeの作成</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="recipemotd">
+<h1>recipeでmotdを操作してみる<a class="headerlink" href="#recipemotd" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="motdcookbooksite-cookbook">
+<h2>motdのcookbookをsite-cookbookディレクトリに作成<a class="headerlink" href="#motdcookbooksite-cookbook" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">今回は、cookbookの名前を、j-motdと命名し作業を進めます。この名前は各自自由につけてください。</p>
+</div>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> /root/chef-repo/
+<span class="gp">$</span> knife coookbook create j-motd -o site-cookbooks
+</pre></div>
+</div>
+</div></blockquote>
+<p>j-motd cookbookのディレクトリに移動します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ./site-cookbooks/j-motd
+</pre></div>
+</div>
+</div></blockquote>
+<p>j-motdのディレクトリは、下記のような構成で作成されます。</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>.
++-- CHANGELOG.md
++-- README.md
++-- attributes
++-- definitions
++-- files
+│   +-- default
+│       +-- motd.tail
++-- libraries
++-- metadata.rb
++-- providers
++-- recipes
+│   +-- default.rb
++-- resources
++-- templates
+    +-- default</pre>
+</div>
+</div></blockquote>
+<p>sshでnodeにログインした時に、コンソールにメッセージを出すためのrecipeを追記します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> vi ./site-cookbooks/j-motd/recipes/default.rb
+</pre></div>
+</div>
+</div></blockquote>
+<p>追記する内容は、下記の様になります。(コメントアウトされていない４行をコーピーしてください)</p>
+<blockquote>
+<div><div class="highlight-ruby"><div class="highlight"><pre><span class="c1">#</span>
+<span class="c1"># Cookbook Name:: j-motd</span>
+<span class="c1"># Recipe:: default</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright 2012, YOUR_COMPANY_NAME</span>
+<span class="c1">#</span>
+<span class="c1"># All rights reserved - Do Not Redistribute</span>
+<span class="c1">#</span>
+
+<span class="n">cookbook_file</span> <span class="s2">&quot;/etc/motd.tail&quot;</span> <span class="k">do</span>
+  <span class="n">source</span> <span class="s2">&quot;motd.tail&quot;</span>
+  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ディレクトリを、files/defaultに移動し、新しくmotd.tailというファイルを設置します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ./site-cookbook/j-motd/files/default
+<span class="gp">$</span> vi motd.tail
+</pre></div>
+</div>
+</div></blockquote>
+<p>下記の内容を、コピーしmotd.tailファイルに書き込んでください。</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>  ______   .______     _______.  ______   ______    _______   _______
+ /  __  \  |   _  \   /       | /      | /  __  \  |       \ |   ____|
+|  |  |  | |  |_)  | |   (----`|  ,----'|  |  |  | |  .--.  ||  |__
+|  |  |  | |   ___/   \   \    |  |     |  |  |  | |  |  |  ||   __|
+|  `--'  | |  |   .----)   |   |  `----.|  `--'  | |  '--'  ||  |____
+ \______/  |__|   |_______/     \______| \______/  |_______/ |_______|
+
+Modified by jhotta@creationline. Inc.</pre>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p>ここまでの作業の解説をします。</p>
+<ul class="last simple">
+<li>cookbook_fileというresouce providerで、/etc/motd.tailというファイルを設置します。</li>
+<li>motd.tailには、644の権限で作成しす。</li>
+<li>特段パスを指定しない場合、coobook_fileで使用するファイルは、failes/default内に設置します。</li>
+<li>motd.tailには、”opscode”と記載されるように記述されいます。</li>
+</ul>
+</div>
+</div></blockquote>
+<p>cookbookをChef Serverにuploadします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ~/chef-repo
+<span class="gp">$</span> knife cookbook upload j-motd
+</pre></div>
+</div>
+</div></blockquote>
+<p>upload出来ているcookbookが確認します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife cookbook list
+</pre></div>
+</div>
+</div></blockquote>
+<p>出力結果：</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>chef-client       2.0.2
+j-motd            0.1.0</pre>
+</div>
+</div></blockquote>
+<p>先ほど、作成したインスタンスのcookbookを登録します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife node run_list add <span class="o">[</span>node名<span class="o">]</span> j-motd
+</pre></div>
+</div>
+</div></blockquote>
+<p>ここでインスタンスに、sshでログインしていきます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> ssh  root@<span class="o">[</span>インスタンスIP<span class="o">]</span>
+<span class="gp">$</span> sudo chef-client
+</pre></div>
+</div>
+</div></blockquote>
+<p>chef-clientが実行されたことを確認できたら、一度logoutし、再度loginします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> ssh  root@<span class="o">[</span>インスタンスIP<span class="o">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="recipe.html">recipeの基本</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../search_attributes/attribute.html">Attributesの検索の結果をmotdに反映するrecipeの作成</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

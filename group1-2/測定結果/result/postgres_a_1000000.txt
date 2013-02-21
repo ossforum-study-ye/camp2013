@@ -1,0 +1,35 @@
+YCSB Client 0.1
+Command line: -db com.yahoo.ycsb.db.JdbcDBClient -s -P workloads/workloada -P /root/YCSB/jdbc/src/main/conf/db.properties -p recordcount=1000000 -load
+Adding shard node URL: jdbc:postgresql://10.3.6.2:5432/ycsb
+com.yahoo.ycsb.DBException: org.postgresql.util.PSQLException: Connection refused. Check that the hostname and port are correct and that the postmaster is accepting TCP/IP connections.
+	at com.yahoo.ycsb.db.JdbcDBClient.init(JdbcDBClient.java:221)
+	at com.yahoo.ycsb.DBWrapper.init(DBWrapper.java:63)
+	at com.yahoo.ycsb.ClientThread.run(Client.java:189)
+Caused by: org.postgresql.util.PSQLException: Connection refused. Check that the hostname and port are correct and that the postmaster is accepting TCP/IP connections.
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:207)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:64)
+	at org.postgresql.jdbc2.AbstractJdbc2Connection.<init>(AbstractJdbc2Connection.java:136)
+	at org.postgresql.jdbc3.AbstractJdbc3Connection.<init>(AbstractJdbc3Connection.java:29)
+	at org.postgresql.jdbc3g.AbstractJdbc3gConnection.<init>(AbstractJdbc3gConnection.java:21)
+	at org.postgresql.jdbc4.AbstractJdbc4Connection.<init>(AbstractJdbc4Connection.java:31)
+	at org.postgresql.jdbc4.Jdbc4Connection.<init>(Jdbc4Connection.java:24)
+	at org.postgresql.Driver.makeConnection(Driver.java:393)
+	at org.postgresql.Driver.connect(Driver.java:267)
+	at java.sql.DriverManager.getConnection(DriverManager.java:579)
+	at java.sql.DriverManager.getConnection(DriverManager.java:221)
+	at com.yahoo.ycsb.db.JdbcDBClient.init(JdbcDBClient.java:201)
+	... 2 more
+Caused by: java.net.ConnectException: Connection refused
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:339)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:200)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:182)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:391)
+	at java.net.Socket.connect(Socket.java:579)
+	at java.net.Socket.connect(Socket.java:528)
+	at org.postgresql.core.PGStream.<init>(PGStream.java:60)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:101)
+	... 13 more
+[OVERALL], RunTime(ms), 129.0
+[OVERALL], Throughput(ops/sec), 0.0
+java -cp /root/YCSB/asm-3.1.jar:/root/YCSB/jdbc/target/jdbc-binding-0.1.4.jar:/root/YCSB/jdbc/target/archive-tmp/jdbc-binding-0.1.4.jar:/root/YCSB/jdbc/src/main/conf:/root/YCSB/jdbc/lib/postgresql92-jdbc.jar:/root/YCSB/nosqldb/src/main/conf:/root/YCSB/hbase/src/main/conf:/root/YCSB/infinispan/src/main/conf:/root/YCSB/gemfire/src/main/conf:/root/YCSB/core/target/core-0.1.4.jar:/root/YCSB/dynamodb/conf:/root/YCSB/voldemort/src/main/conf com.yahoo.ycsb.Client -db com.yahoo.ycsb.db.JdbcDBClient -s -P workloads/workloada -P /root/YCSB/jdbc/src/main/conf/db.properties -p recordcount=1000000 -load

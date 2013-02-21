@@ -1,0 +1,175 @@
+重要コンセプトと単語
+=========================================
+
+　重要コンセプト：
+　
+  * べき等性_ 
+  * 大雑把に言って、ある操作を1回行っても複数回行っても結果が同じという概念
+
+  .. image::
+    ../_static/idempotent.jpg
+    :width: 860
+
+  「注文したBeerが未だ届いていません」と店員さんに伝えた直後に、伝えた店員によってBeerが１杯届き。更に、しばらくすると別の店員がBeerをもう１杯持ってくる。 **こんな店には、べき等性がない。**
+
+
+全体像
+-------------------------------
+  .. image::
+    ../_static/overview_chef_draft.png
+    :scale: 100
+
+
+Recipe_
+-----------------------------------------------------
+
+  * 実際の設定手順が記載されたファイル
+  * このファイルに記述された順番通りに実行される
+  * Rubyのinternal DSLで記述されている
+  * Rubyシンタックスで記述されている
+  * このrecipeは他のrecipeから参照できる
+  * node.objectを通して、設定ターゲットnodeのattribues(情報)を読み込むことができる
+
+
+Resource_
+-----------------------------------------------------
+
+  * Chefのアクションを実行するユニット
+  
+  .. code-block:: ruby
+
+    package "debian-archive-keyring" do
+      action :install
+      options "--force-yes"
+    end
+
+    cookbook_file "/tmp/testfile" do
+      source "testfile" # this is the value that would be inferred from the path parameter
+      mode "0644"
+    end
+
+  * nodeの状態が別々にテストされ、アクションが実行される単位
+  * resourceに含まれる項目
+
+    .. list-table::    
+    
+      * - **Cookbook File**
+        - Cron
+        - Deploy
+        - Directory
+        - Env
+        - Erlang Call
+        - **Execute**
+      * - File
+        - Git
+        - Group
+        - HTTP Request
+        - Ifconfig
+        - Link
+        - Log
+      * - Mdadm
+        - Mount
+        - Ohai
+        - **Package**
+        - PowerShell Script
+        - Remote Directory
+        - Remote File
+      * - Route
+        - Ruby Block
+        - SCM
+        - Script
+        - Service
+        - Subversion
+        - **Template**
+      * - User
+        - Opscode Cookbook LWRPs
+        -  
+        - 
+        - 
+        - 
+        - 
+
+
+Cookbook_
+-----------------------------------------------------
+
+  * recipe をパッケージ化したもので、apache2のように複数のrecipeを含む場合もある
+  * 一般的に一つのソフト(apache,mysql等)や一つの機能をパッケージ化している
+
+
+Roles_
+-----------------------
+
+  * Nodeを設定する際に、類似している要素(feature)のグループ 
+  * Roleは、cookbookやrecipeとAttributeの集合
+  * Nodeは複数のRoleを持つことができる
+  * Chef-clientの実行時に複数のRoleとrecipeは展開され、一つのrun_listにマージされる
+
+
+`Run List`_
+-----------------------
+
+  * Nodeで実行されるrecipeのリスト
+  * knife, Role, 等の場所で設定することができる
+
+  .. code-block:: ruby 
+
+    run_list "recipe[apache2]", "recipe[apache2::mod_ssl]", "role[monitor]"
+
+
+Attribute_
+-----------------------
+
+  * Chef Serverの保存されたNodeを設定するための変数data
+  * Chef Server上で検索できる
+  * Chef Serverを使ったNodeの運用時には、状況に応じて動的に変更できる
+
+attributeをcookbookの中で設定する場合は、cookbookディレクトリの中にattributeというディレクトリを作成し、値を記述したファイルを作成する。
+
+  例としてcookbooks/apache2/attributes/default.rb に下記のようなattributeを設定し、それをhttp.confを生成するためのtemplateと合成し、状況に応じて最終設定ファイルを出力する。
+
+  ::
+   
+    default["apache"]["dir"]          = "/etc/apache2"
+    default["apache"]["listen_ports"] = [ "80","443" ]
+
+
+Ohaiにより自動収集されるattribute:
+
+  - IP address
+  - hostname
+  - CPU, HDD, memory, partion
+  - インストールしたkernel modules
+  - 導入されてプログラミング言語, version
+  - その他、大量の情報
+
+
+`Node Object`_
+--------------------------
+
+  * Chef Serverに保存されている、各Nodeに関連する情報レコード 
+  * それぞれのnodeに関わる情報は、node.objectを介して参照することができる
+  * node.objectに含まれる項目を、Attributeと呼ぶ
+  * このAttributeの参照とテンプレートへの書き込みが、Chefの柔軟な設定能力を強化している
+
+
+Node_
+----------------------------------------------------
+  
+  * Chef Clientが実行されている場所
+  * Attributeとrun listという要素を保持したレコード行
+  * Recipesと [Roles]_ を適用する先
+
+
+
+.. _Idempotent: http://wiki.opscode.com/display/chef/Chef+Core+Principles
+.. _Node: http://wiki.opscode.com/display/chef/Nodes
+.. _Resource: http://wiki.opscode.com/display/chef/Resources
+.. _Recipe: http://wiki.opscode.com/display/chef/Recipes
+.. _Cookbook: http://wiki.opscode.com/display/chef/Cookbooks
+.. _Run List: http://wiki.opscode.com/display/chef/Setting+the+run_list+in+JSON+during+run+time
+.. _Roles: http://wiki.opscode.com/display/chef/Roles
+.. _Search: http://wiki.opscode.com/display/chef/Search
+.. _べき等性: http://ja.wikipedia.org/wiki/%E5%86%AA%E4%B9%97
+.. _Node Object: http://wiki.opscode.com/display/chef/Recipes#Recipes-NodeObject
+.. _Attribute: http://wiki.opscode.com/display/chef/Attributes

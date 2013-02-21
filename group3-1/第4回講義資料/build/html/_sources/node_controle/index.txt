@@ -1,0 +1,144 @@
+Chef Nodeを操作
+===================================
+
+  ** EUCA COMMANDS **
+
+  * knife euca flavor list (options)
+  * knife euca image list (options)
+  * knife euca server create (options)
+  * knife euca server list (options)
+  * knife euca server delete SERVER_ID [SERVER_ID] (options)
+
+
+クラウド内で起動できるインスタンスの情報を収集
+-------------------------------------------------------
+
+  .. code-block:: console
+
+    $ cd /root/chef-repo
+    $ knife euca flavor list
+
+
+edubase Cloudで起動したインスタンスに、Chef-clientを組み込み、Chef Serverに登録
+---------------------------------------------------------------------------------
+
+  .. code-block:: console 
+
+    $ knife cookbook site install chef-client
+    $ knife cookbook upload chef-client
+
+実際にcookbookが登録できているか確認してみます。
+
+  .. code-block:: console
+
+    $ knife cookbook list
+
+cookbookの名前と、バージョンを確認します。（今回は、下記のように表示される）
+
+  .. code-block:: console
+
+      chef-client 2.0.2
+
+
+収集した情報に基づいてインスタンスを起動
+---------------------------------------------------------
+
+  .. code-block:: console
+
+  	$ knife euca server create \
+                -r "recipe[chef-client]" \
+                -I emi-1C55144B \
+                --flavor c1.medium \
+                -x ubuntu \
+                -P ossforum \
+                -Z clouster0 \
+                -G ossforum-chef
+                -N ossforum-user001 \
+                -VV
+
+それぞれの変数オプションの内容は以下の通り
+
+knife euca server create (options)
+
+  .. csv-table::
+    :widths: 25, 25, 50
+
+    -S, --ssh-key KEY,                The Eucalyptus SSH key id
+    -i IDENTITY_FILE,,                The SSH identity file used for authentication
+    -r, --run-list RUN_LIST,          Comma separated list of roles/recipes to apply
+    -I, --image IMAGE,                The AMI for the server
+    -f, --flavor FLAVOR,              "The flavor of server (m1.small, m1.medium, etc)"
+    -Z, --availability-zone ZONE,     The Availability Zone
+    -G, "--groups X,Y,Z",             "The security groups for this server; not allowed when"
+    -x, --ssh-user USERNAME,          The ssh username
+    -P, --ssh-password PASSWORD,      The ssh password
+    -N, --node-name NAME,             The Chef node name for your new node
+    -V, --verbose,                    More verbose output. Use twice for max verbosity
+    -d, --distro DISTRO,              "Bootstrap a distro using a template; default is 'chef-full'"
+
+|
+
+  .. note::
+
+    今回のコマンドは、Eucalyptusでインスタンス起動 + Chef clinetのインストール + nodeの登録を一気に実行してます。
+
+
+上記のコマンドでchef-clientインストールできない場合
+
+  .. code-block:: console
+
+    $ knife bootstrap [IPアドレス] -N jay-server101 \
+                                  -x ubuntu \
+                                  -P ossforum \
+                                  -r "recipe[chef-client]" \
+                                  --sudo
+
+|
+
+  .. note::
+
+    knifeに準備されているbootstrapスクリプト (-dで指定できるもの)
+
+    - archlinux-gems.erb
+    - centos5-gems.erb
+    - chef-full.erb
+    - fedora13-gems.erb
+    - ubuntu10.04-apt.erb
+    - ubuntu10.04-gems.erb
+    - ubuntu12.04-gems.erb
+
+インスタンスが既に起動している場合は、下記のコマンドで遠隔的にchef-clinetをインストールすることできます。
+
+  .. code-block:: console
+
+    $ knife bootstrap IP_ADDRESS -x ubuntu \
+                                 -P PASSWORD \ 
+                                 --sudo
+
+    $ knife bootstrap IP_ADDRESS -x ubuntu \
+                                 -i ~/.ssh/id_rsa \
+                                 --sudo
+
+
+
+インスタンスの削除とNode＆Clientの削除
+----------------------------------------------------------------------
+
+  .. code-block:: console
+
+    $ knife euca server list
+
+    $ knife euca server delete [削除したい instance id]
+    
+    $ knife node list
+    
+    $ knife node delete -y [削除した node]
+    
+    $ knife clinet list 
+    
+    $ knife clinet delete -y [削除した clinet]
+
+
+
+
+

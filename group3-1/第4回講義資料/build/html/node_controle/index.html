@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Chef Nodeを操作 &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="../index.html" />
+    <link rel="next" title="recipeの基本" href="../recipe101/recipe.html" />
+    <link rel="prev" title="knife-eucaのインストールと設定" href="../knife_euca/index.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>Chef Nodeを操作</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="../knife_euca/index.html">knife-eucaのインストールと設定</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../recipe101/recipe.html">recipeの基本</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="chef-node">
+<h1>Chef Nodeを操作<a class="headerlink" href="#chef-node" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<blockquote>
+<div><p>** EUCA COMMANDS **</p>
+<ul class="simple">
+<li>knife euca flavor list (options)</li>
+<li>knife euca image list (options)</li>
+<li>knife euca server create (options)</li>
+<li>knife euca server list (options)</li>
+<li>knife euca server delete SERVER_ID [SERVER_ID] (options)</li>
+</ul>
+</div></blockquote>
+<div class="section" id="id1">
+<h2>クラウド内で起動できるインスタンスの情報を収集<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> /root/chef-repo
+<span class="gp">$</span> knife euca flavor list
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="edubase-cloudchef-clientchef-server">
+<h2>edubase Cloudで起動したインスタンスに、Chef-clientを組み込み、Chef Serverに登録<a class="headerlink" href="#edubase-cloudchef-clientchef-server" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife cookbook site install chef-client
+<span class="gp">$</span> knife cookbook upload chef-client
+</pre></div>
+</div>
+</div></blockquote>
+<p>実際にcookbookが登録できているか確認してみます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife cookbook list
+</pre></div>
+</div>
+</div></blockquote>
+<p>cookbookの名前と、バージョンを確認します。（今回は、下記のように表示される）</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="go">chef-client 2.0.2</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id2">
+<h2>収集した情報に基づいてインスタンスを起動<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife euca server create <span class="se">\</span>
+<span class="go">        -r &quot;recipe[chef-client]&quot; \</span>
+<span class="go">        -I emi-1C55144B \</span>
+<span class="go">        --flavor c1.medium \</span>
+<span class="go">        -x ubuntu \</span>
+<span class="go">        -P ossforum \</span>
+<span class="go">        -Z clouster0 \</span>
+<span class="go">        -G ossforum-chef</span>
+<span class="go">        -N ossforum-user001 \</span>
+<span class="go">        -VV</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>それぞれの変数オプションの内容は以下の通り</p>
+<p>knife euca server create (options)</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>-S</td>
+<td>&#8211;ssh-key KEY</td>
+<td>The Eucalyptus SSH key id</td>
+</tr>
+<tr class="row-even"><td>-i IDENTITY_FILE</td>
+<td>&nbsp;</td>
+<td>The SSH identity file used for authentication</td>
+</tr>
+<tr class="row-odd"><td>-r</td>
+<td>&#8211;run-list RUN_LIST</td>
+<td>Comma separated list of roles/recipes to apply</td>
+</tr>
+<tr class="row-even"><td>-I</td>
+<td>&#8211;image IMAGE</td>
+<td>The AMI for the server</td>
+</tr>
+<tr class="row-odd"><td>-f</td>
+<td>&#8211;flavor FLAVOR</td>
+<td>The flavor of server (m1.small, m1.medium, etc)</td>
+</tr>
+<tr class="row-even"><td>-Z</td>
+<td>&#8211;availability-zone ZONE</td>
+<td>The Availability Zone</td>
+</tr>
+<tr class="row-odd"><td>-G</td>
+<td>&#8211;groups X,Y,Z</td>
+<td>The security groups for this server; not allowed when</td>
+</tr>
+<tr class="row-even"><td>-x</td>
+<td>&#8211;ssh-user USERNAME</td>
+<td>The ssh username</td>
+</tr>
+<tr class="row-odd"><td>-P</td>
+<td>&#8211;ssh-password PASSWORD</td>
+<td>The ssh password</td>
+</tr>
+<tr class="row-even"><td>-N</td>
+<td>&#8211;node-name NAME</td>
+<td>The Chef node name for your new node</td>
+</tr>
+<tr class="row-odd"><td>-V</td>
+<td>&#8211;verbose</td>
+<td>More verbose output. Use twice for max verbosity</td>
+</tr>
+<tr class="row-even"><td>-d</td>
+<td>&#8211;distro DISTRO</td>
+<td>Bootstrap a distro using a template; default is &#8216;chef-full&#8217;</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">今回のコマンドは、Eucalyptusでインスタンス起動 + Chef clinetのインストール + nodeの登録を一気に実行してます。</p>
+</div>
+</div></blockquote>
+<p>上記のコマンドでchef-clientインストールできない場合</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife bootstrap <span class="o">[</span>IPアドレス<span class="o">]</span> -N jay-server101 <span class="se">\</span>
+<span class="go">                              -x ubuntu \</span>
+<span class="go">                              -P ossforum \</span>
+<span class="go">                              -r &quot;recipe[chef-client]&quot; \</span>
+<span class="go">                              --sudo</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p>knifeに準備されているbootstrapスクリプト (-dで指定できるもの)</p>
+<ul class="last simple">
+<li>archlinux-gems.erb</li>
+<li>centos5-gems.erb</li>
+<li>chef-full.erb</li>
+<li>fedora13-gems.erb</li>
+<li>ubuntu10.04-apt.erb</li>
+<li>ubuntu10.04-gems.erb</li>
+<li>ubuntu12.04-gems.erb</li>
+</ul>
+</div>
+</div></blockquote>
+<p>インスタンスが既に起動している場合は、下記のコマンドで遠隔的にchef-clinetをインストールすることできます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife bootstrap IP_ADDRESS -x ubuntu <span class="se">\</span>
+<span class="go">                             -P PASSWORD \</span>
+<span class="go">                             --sudo</span>
+
+<span class="gp">$</span> knife bootstrap IP_ADDRESS -x ubuntu <span class="se">\</span>
+<span class="go">                             -i ~/.ssh/id_rsa \</span>
+<span class="go">                             --sudo</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="node-client">
+<h2>インスタンスの削除とNode＆Clientの削除<a class="headerlink" href="#node-client" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife euca server list
+
+<span class="gp">$</span> knife euca server delete <span class="o">[</span>削除したい instance id<span class="o">]</span>
+
+<span class="gp">$</span> knife node list
+
+<span class="gp">$</span> knife node delete -y <span class="o">[</span>削除した node<span class="o">]</span>
+
+<span class="gp">$</span> knife clinet list
+
+<span class="gp">$</span> knife clinet delete -y <span class="o">[</span>削除した clinet<span class="o">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="../knife_euca/index.html">knife-eucaのインストールと設定</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../recipe101/recipe.html">recipeの基本</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

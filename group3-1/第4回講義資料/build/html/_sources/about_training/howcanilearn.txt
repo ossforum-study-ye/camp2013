@@ -1,0 +1,49 @@
+Chefを学習する方法
+==================================
+
+**重要**
+
+  * **とにかく、”触ること”、”試すこと”**
+  * **80％は、”慣れ”。このハンズオン習得**
+  * **20%は、自分で色々試すして確認**
+
+更に！
+------------
+　
+  .. image::
+    ../_static/wiki_opscode.png
+    :alt: Chefを実行す環境
+    :width: 800 px
+    :align: center
+  
+  * Opscodeの wiki_ で必要な情報を得られる場所を理解する。
+   ( `http://wiki.opscode.com/display/chef/Home`_ )
+
+  .. image::
+    ../_static/docs_opscode.png
+    :alt: Chefを実行す環境
+    :width: 800 px
+    :align: center
+    
+  * 最近、Opscodeの docs_ サイトができた。
+   ( `http://docs.opscode.com`_ )
+
+
+
+Chefを実行する環境構成
+-----------------------------------------------------------------
+
+  .. image::
+    ../_static/process_aws.png
+    :alt: Chefを実行す環境
+    :width: 800 px
+    :align: center
+
+
+クラウド上に、「Chefのワークステーション」と「実際に設定するnode」を別々に起動します。
+Workstationとして設定したインスタンスにsshでアクセスし全ての操作を行っていくことにします。
+
+.. _wiki: http://wiki.opscode.com/display/chef/Home
+.. _docs: http://docs.opscode.com
+.. _`http://wiki.opscode.com/display/chef/Home`: http://wiki.opscode.com/display/chef/Home
+.. _`http://docs.opscode.com`: http://docs.opscode.com

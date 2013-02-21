@@ -1,0 +1,8 @@
+Cookbook/Recipeの基本
+========================================
+
+.. toctree::
+   :maxdepth: 1
+
+   ./recipe.rst
+   ./motd.rst

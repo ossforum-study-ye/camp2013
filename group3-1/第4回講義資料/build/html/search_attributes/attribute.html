@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Attributesの検索の結果をmotdに反映するrecipeの作成 &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="../index.html" />
+    <link rel="next" title="Data bagを使ったAttributeの設定" href="data_bag.html" />
+    <link rel="prev" title="recipeでmotdを操作してみる" href="../recipe101/motd.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>Attributesの検索の結果をmotdに反映するrecipeの作成</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="../recipe101/motd.html">recipeでmotdを操作してみる</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="data_bag.html">Data bagを使ったAttributeの設定</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="attributesmotdrecipe">
+<h1>Attributesの検索の結果をmotdに反映するrecipeの作成<a class="headerlink" href="#attributesmotdrecipe" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>先ほど利用したj-motdにファイルを追加することで、改良を加えてきます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> /root/chef-repo
+<span class="gp">$</span> vi site-cookbooks/j-mod/recipe/use_attribute.rb
+</pre></div>
+</div>
+</div></blockquote>
+<p>下記の内容を記述します。</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>#
+# Cookbook Name:: j-motd
+# Recipe:: use_attribute
+#
+# Copyright 2012, YOUR_COMPANY_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+
+template "/etc/motd.tail" do
+  source "motd.tail.erb"
+  mode "0644"
+  variables({
+    :x_men =&gt; node[:chef_handson]
+  })
+end</pre>
+</div>
+</div></blockquote>
+<p>次に、rubyのテンプレートを記述します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> vi site-cookbooks/j-motd/templates/default/motd.tail.erb
+</pre></div>
+</div>
+</div></blockquote>
+<p>以下の内容を記述していきます。</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>  ______   .______     _______.  ______   ______    _______   _______
+ /  __  \  |   _  \   /       | /      | /  __  \  |       \ |   ____|
+|  |  |  | |  |_)  | |   (----`|  ,----'|  |  |  | |  .--.  ||  |__
+|  |  |  | |   ___/   \   \    |  |     |  |  |  | |  |  |  ||   __|
+|  `--'  | |  |   .----)   |   |  `----.|  `--'  | |  '--'  ||  |____
+ \______/  |__|   |_______/     \______| \______/  |_______/ |_______|
+
+
+Modified by jhotta@creationline. Inc.
+
+YOU ARE LOGED IN AS: &lt;%= node[:current_user] %&gt;
+This will be an extra attribute that show in the handson &lt;%= @x_men %&gt;</pre>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<ul class="last simple">
+<li>erbの中から、node.objectに対して直接検索を書けることもきます。</li>
+<li>recpieの中で検索し、結果をvariablesでerbに引き渡すこともできます。</li>
+</ul>
+</div>
+</div></blockquote>
+<p>Chef Serverに向けて、cookbookを再度uploadします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife coookbook upload j-motd
+</pre></div>
+</div>
+</div></blockquote>
+<p>ここで、run_listに変更を加えます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife node show jay-server211
+<span class="gp">$</span> knife node run_list remove jay-server211 <span class="s2">&quot;recipe[j-motd]&quot;</span>
+<span class="gp">$</span> knife node show jay-server211
+<span class="gp">$</span> knife node run_list add jay-server211 <span class="s2">&quot;recipe[j-motd::use_attribute]&quot;</span>
+<span class="gp">$</span> knife node show jay-server211
+</pre></div>
+</div>
+</div></blockquote>
+<p>node.objectを直接変更する場合は、下記の様に行います。</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">node.objectの手動での変更は、実際の運用では絶対にやめてください。</p>
+</div>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nv">EDITOR</span><span class="o">=</span>vi knife node edit <span class="o">[</span>起動しているnode名<span class="o">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>以下の様に、node.objectを変更します。</p>
+<blockquote>
+<div><div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;起動時につけた名前&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;chef_environment&quot;</span><span class="p">:</span> <span class="s2">&quot;_default&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;normal&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span>
+
+    <span class="p">],</span>
+    <span class="nt">&quot;chef_client&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;bin&quot;</span><span class="p">:</span> <span class="s2">&quot;/usr/bin/chef-client&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;chef_handson&quot;</span><span class="p">:</span> <span class="s2">&quot;表示したい名前&quot;</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;run_list&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;recipe[chef-client]&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;recipe[j-motd::use_attribute]&quot;</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ターゲットのnodeで、chef-clientを実行してみます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> ssh root@<span class="o">[</span>インスタンスIP<span class="o">]</span>
+<span class="gp">$</span> sudo chef-client
+</pre></div>
+</div>
+</div></blockquote>
+<p>一度exitし、nodeに再度loginすると下記の様に表示されます。</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>  ______   .______     _______.  ______   ______    _______   _______
+ /  __  \  |   _  \   /       | /      | /  __  \  |       \ |   ____|
+|  |  |  | |  |_)  | |   (----`|  ,----'|  |  |  | |  .--.  ||  |__
+|  |  |  | |   ___/   \   \    |  |     |  |  |  | |  |  |  ||   __|
+|  `--'  | |  |   .----)   |   |  `----.|  `--'  | |  '--'  ||  |____
+ \______/  |__|   |_______/     \______| \______/  |_______/ |_______|
+
+
+Modified by jhotta@creationline. Inc.
+
+YOU ARE LOGED IN AS: ubuntu
+
+This will be an extra attribute that show in the handson "表示したい名前"</pre>
+</div>
+</div></blockquote>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="../recipe101/motd.html">recipeでmotdを操作してみる</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="data_bag.html">Data bagを使ったAttributeの設定</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,154 @@
+[参考URL]：http://docs.basho.com/riak/latest/
+
+
+[インストール手順]
+# apt-get install curl
+
+# curl http://apt.basho.com/gpg/basho.apt.key | apt-key add -
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  1016  100  1016    0     0    862      0  0:00:01  0:00:01 --:--:--  3342
+OK
+
+# bash -c "echo deb http://apt.basho.com `lsb_release -sc` main > /etc/apt/sources.list.d/basho.list"
+# apt-get update
+・・・・
+(途中省略)
+・・・・
+Fetched 316 B in 5s (60 B/s)
+Reading package lists... Done
+
+# apt-cache showpkg riak
+Package: riak
+Versions:
+1.2.1-1 (/var/lib/apt/lists/apt.basho.com_dists_precise_main_binary-amd64_Packages)
+ Description Language:
+                 File: /var/lib/apt/lists/apt.basho.com_dists_precise_main_binary-amd64_Packages
+                  MD5: f38bf4e5d49cddc647c1f784afa6f597
+
+1.2.0-1 (/var/lib/apt/lists/apt.basho.com_dists_precise_main_binary-amd64_Packages)
+ Description Language:
+                 File: /var/lib/apt/lists/apt.basho.com_dists_precise_main_binary-amd64_Packages
+                  MD5: f38bf4e5d49cddc647c1f784afa6f597
+
+
+Reverse Depends:
+Dependencies:
+1.2.1-1 - adduser (0 (null)) logrotate (0 (null)) libc6 (2 2.15) libgcc1 (2 1:4.1.1) libssl1.0.0 (2 1.0.0) libstdc++6 (2 4.1.1) libtinfo5 (0 (null)) sudo (0 (null))
+1.2.0-1 - adduser (0 (null)) logrotate (0 (null)) libc6 (2 2.15) libgcc1 (2 1:4.1.1) libssl1.0.0 (2 1.0.0) libstdc++6 (2 4.1.1) libtinfo5 (0 (null)) sudo (0 (null))
+Provides:
+1.2.1-1 -
+1.2.0-1 -
+Reverse Provides:
+
+# apt-get install riak
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+・・・・
+(途中省略)
+・・・・
+Done.
+Adding system user `riak' (UID 103) ...
+Adding new user `riak' (UID 103) with group `riak' ...
+Not creating home directory `/var/lib/riak'.
+
+[設定]
+・二次インデックスを利用する場合、バックエンドdbをLeveldbにする必要があるため、
+  /etc/riak/app.configを以下のように編集する
+  ----
+  %%{storage_backend, riak_kv_bitcask_backend},
+  {storage_backend, riak_kv_eleveldb_backend},
+  ----
+
+・クラスタ構成の設定
+  /etc/riak/app.configを以下のように編集する
+  ----
+  %%{pb_ip,   "127.0.0.1" },
+  {pb_ip,   "(プライベートIP)" },
+
+  %% {http, [ {"127.0.0.1", 8098 } ]},
+  {http, [ {"(プライベートIP)", 8098 } ]},
+  ----
+  
+  /etc/riak/vm.args
+  ----
+  #-name riak@127.0.0.1
+  -name riak@(プライベートIP)
+  ----
+
+・riak を起動するまえに 127.0.0.1 で起動していたriak はリングファイルを
+  127.0.0.1 から指定した IP に変更する必要がある
+# /etc/init.d/riak stop
+ok
+# riak-admin reip riak@127.0.0.1 riak@(プライベートIP)
+
+[起動]
+# /etc/init.d/riak start
+
+・存在確認
+# riak ping
+[pongならばok, pangならばng)
+
+・メンバーステータスの確認
+# riak-admin member_status
+
+
+[クラスタ]
+・Riakはマスターレス。コマンドは基本的に適応させたいNodeサーバー内で行う。
+  riak@10.3.6.134をriak@10.3.6.135にjoin。
+(10.3.6.134にログインして)
+# riak-admin cluster join riak@10.3.6.135
+Attempting to restart script through sudo -H -u riak
+Success: staged join request for 'riak@10.3.6.134' to 'riak@10.3.6.135'
+
+(
+# riak-admin cluster plan
+Attempting to restart script through sudo -H -u riak
+=============================== Staged Changes ================================
+Action         Nodes(s)
+-------------------------------------------------------------------------------
+join           'riak@10.3.6.135'
+-------------------------------------------------------------------------------
+
+
+NOTE: Applying these changes will result in 1 cluster transition
+
+###############################################################################
+                         After cluster transition 1/1
+###############################################################################
+
+================================= Membership ==================================
+Status     Ring    Pending    Node
+-------------------------------------------------------------------------------
+valid       0.0%     50.0%    'riak@10.3.6.134'
+valid     100.0%     50.0%    'riak@10.3.6.135'
+-------------------------------------------------------------------------------
+Valid:2 / Leaving:0 / Exiting:0 / Joining:0 / Down:0
+
+WARNING: Not all replicas will be on distinct nodes
+
+Transfers resulting from cluster changes: 32
+  32 transfers from 'riak@10.3.6.135' to 'riak@10.3.6.134'
+
+# riak-admin cluster commit
+Attempting to restart script through sudo -H -u riak
+Cluster changes committed
+
+# riak-admin member_status
+Attempting to restart script through sudo -H -u riak
+================================= Membership ==================================
+Status     Ring    Pending    Node
+-------------------------------------------------------------------------------
+valid      50.0%      --      'riak@10.3.6.134'
+valid      50.0%      --      'riak@10.3.6.135'
+-------------------------------------------------------------------------------
+Valid:2 / Leaving:0 / Exiting:0 / Joining:0 / Down:0
+
+
+# riak-admin cluster leave riak@10.3.6.134
+Attempting to restart script through sudo -H -u riak
+Success: staged leave request for 'riak@10.3.6.134'
+
+# riak-admin clluster commit
+(Statusがleavingに変化する)

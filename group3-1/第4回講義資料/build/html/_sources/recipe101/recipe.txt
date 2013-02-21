@@ -1,0 +1,9 @@
+recipeの基本
+==========================
+
+  - Recipeは、リソースを集めたもの
+  - Cookbooksは、recipes, templates, files, custom resources, etc
+  - Codeのモジュール化と再利用
+
+  .. image::
+    ../_static/whats_in_it.png

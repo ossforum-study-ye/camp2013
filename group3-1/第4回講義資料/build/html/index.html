@@ -1,0 +1,157 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Opscode Hosted Chef ハンズオン &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <script type="text/javascript" src="_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="#" />
+    <link rel="next" title="トレーニング時間と注意事項" href="about_training/time_place.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="#">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>Opscode Hosted Chef ハンズオン</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        <a class="uplink" href="#">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="about_training/time_place.html">トレーニング時間と注意事項</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="opscode-hosted-chef">
+<h1>Opscode Hosted Chef ハンズオン<a class="headerlink" href="#opscode-hosted-chef" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="id1">
+<h2>はじめに<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>このドキュメントは、Hosted Chef Server(Opsocde Chef SaaS)とknife pluginを利用し、パブリッククラウドにインスタンスの起動し、Chef Server管理下への登録し、Cookbook &amp; Recipeにて管理する基本的な手順を説明したものです。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h1>研修について<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about_training/time_place.html">トレーニング時間と注意事項</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about_training/instructor.html">本日のインストラクタ–</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about_training/objectives.html">トレーニングの目標</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about_training/howcanilearn.html">Chefを学習する方法</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="agenda">
+<h1>Agenda<a class="headerlink" href="#agenda" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about_training/agenda.html">研修のアジェンダ</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="server-configuration-tool">
+<h1>Server Configuration Toolの必要性<a class="headerlink" href="#server-configuration-tool" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="needs_server_config/inside_auto.html">自動化の中身を見てみると</a></li>
+<li class="toctree-l1"><a class="reference internal" href="needs_server_config/virtual.html">仮想化,クラウドで何が変わった？</a></li>
+<li class="toctree-l1"><a class="reference internal" href="needs_server_config/survive.html">生き残り、成長する方法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="needs_server_config/as_code.html">問題解決への取り組み</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="opscode-chef">
+<h1>Opscode Chefについて<a class="headerlink" href="#opscode-chef" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chef101/architect.html">Chef ServerとClient &amp; Nodeの関係</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chef101/advantage.html">Chefの利用メリット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chef101/chef_terms.html">重要コンセプトと単語</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chef101/so_what_is_chef.html">それで！ Chefを一言で？！</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id3">
+<h1>ハンズオン<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hosted_chef_register/index.html">Hosted Chef Serverへのユーザー登録</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workstation_install/index.html">Workstationの設定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knife_euca/index.html">knife-eucaのインストールと設定</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node_controle/index.html">Chef Nodeを操作</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipe101/recipe.html">recipeの基本</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipe101/motd.html">recipeでmotdを操作してみる</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search_attributes/attribute.html">Attributesの検索の結果をmotdに反映するrecipeの作成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search_attributes/data_bag.html">Data bagを使ったAttributeの設定</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h1>まとめ<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>本日はありがとうございました。
+機会がありましたら、是非Chefを試してみてください。</p>
+</div>
+<div class="section" id="q-a">
+<h1>Q＆A<a class="headerlink" href="#q-a" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>何でもどうぞ！　;)</p>
+</div>
+<div class="section" id="id5">
+<h1>資料作成責任者<a class="headerlink" href="#id5" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="line-block">
+<div class="line">堀田直孝</div>
+<div class="line">上級コンサルタント</div>
+<div class="line">クリエーションライン株式会社(CREATIONLINE,Inc.)</div>
+<div class="line">東京都千代田区神田佐久間町3-6 M&#8217;s WORKS BLDG 2F</div>
+<div class="line">電話番号  03-5829-8355</div>
+<div class="line">email <a class="reference external" href="mailto:j-hotta&#37;&#52;&#48;creationline&#46;com">j-hotta<span>&#64;</span>creationline<span>&#46;</span>com</a></div>
+</div>
+<img alt="&#64;jhotta" src="_images/bioremamagao_180.jpg" />
+<div class="section" id="id6">
+<h2>注意書き<a class="headerlink" href="#id6" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>ハンズオン実施にあたり手順の検証は行っておりますが、全ての動作を保証するものではありません。ドキュメント内で紹介しているコマンドや各構成要素の仕様変更は、Opscode wikiのドキュメントを参考に、常に最新情報に読み替えてください。</p>
+<p>またハンズオン参加者が、本ドキュメントに従って操作をしたことにより不利益／損害等にあったとしても、Japan Chef User Groupは一切保証しません。各参加者の責任において、パブリッククラウド及びChefの操作を実行してください。</p>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        <a class="uplink" href="#">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="about_training/time_place.html">トレーニング時間と注意事項</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

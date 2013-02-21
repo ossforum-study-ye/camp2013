@@ -1,0 +1,130 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Hosted Chef Serverへのユーザー登録 &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="../index.html" />
+    <link rel="next" title="Workstationの設定" href="../workstation_install/index.html" />
+    <link rel="prev" title="それで！ Chefを一言で？！" href="../chef101/so_what_is_chef.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>Hosted Chef Serverへのユーザー登録</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="../chef101/so_what_is_chef.html">それで！ Chefを一言で？！</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../workstation_install/index.html">Workstationの設定</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="hosted-chef-server">
+<h1>Hosted Chef Serverへのユーザー登録<a class="headerlink" href="#hosted-chef-server" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<blockquote>
+<div><p>以降の手順に基づいて、下記のファイルを取得します。</p>
+<ul class="simple">
+<li>Chef serverへの <strong>認証ファイル</strong> (pemファイル 2種類)</li>
+<li>knifeを使うための <strong>環境設定ファイル</strong> (knife.rb)</li>
+</ul>
+</div></blockquote>
+<div class="section" id="hosted-chef">
+<h2>Hosted Chefを利用するユーザーを登録<a class="headerlink" href="#hosted-chef" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last"><a class="reference external" href="http://www.opscode.com/hosted-chef/">Hosted Chef</a> Sign UP <a class="reference external" href="http://www.opscode.com/">Opscode</a> サイトの一番上の分の黒い帯の中にあります。</p>
+</div>
+</div></blockquote>
+<p>Opscodeのサイトから <a class="reference external" href="http://www.opscode.com/hosted-chef/">Hosted Chef</a> のユーザー登録画面にたどり着くには複数の方法がありますが、下記のページから登録を開始できます。</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/hosted_chef_free.png"><img alt="../_images/hosted_chef_free.png" src="../_images/hosted_chef_free.png" style="width: 860.0px;" /></a>
+</div></blockquote>
+<p>&#8220;About you&#8221;の部分に必要事項を記入して、 <strong>agree</strong> にチェックマークを入れ、&#8221;Next&gt;&#8221;をクリックします。</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="../_images/hosted_chef_free2.png"><img alt="../_images/hosted_chef_free2.png" src="../_images/hosted_chef_free2.png" style="width: 860.0px;" /></a>
+</div></blockquote>
+</div>
+<div class="section" id="hosted-chef-serverpem">
+<h2>Hosted Chef Serverに登録したユーザー認証用のpemファイルを取得<a class="headerlink" href="#hosted-chef-serverpem" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><blockquote>
+<div><a class="reference internal image-reference" href="../_images/hosted_chef_free3.png"><img alt="../_images/hosted_chef_free3.png" src="../_images/hosted_chef_free3.png" style="width: 860.0px;" /></a>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">画面右上の黒い帯の中の <strong>”logged in as: ○○”</strong> と表示されている部分をクリックしAccount Management画面が表示されたら、 <strong>&#8220;Change Password&#8221;</strong> をクリックします。</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p><strong>上記のタイミングでpem ファイルを取得できなかった場合は、下記の手順で新しくpemファイルをジェネレートします。</strong></p>
+<blockquote class="last">
+<div><a class="reference internal image-reference" href="../_images/user_pem_regen.jpg"><img alt="../_images/user_pem_regen.jpg" src="../_images/user_pem_regen.jpg" style="width: 600.0px;" /></a>
+</div></blockquote>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="organization-pemknife">
+<h2>Organization(組織)の認証用のpemファイルとknifeの環境設定用ファイルを取得<a class="headerlink" href="#organization-pemknife" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><p>右上のOrganization(組織)をクリックします。その後、赤枠の部分にある項目をクリックしファイルをダウンロードします。</p>
+<ul class="simple">
+<li>Regenerate validation key</li>
+<li>Generate knife config</li>
+</ul>
+<a class="reference internal image-reference" href="../_images/hosted_chef_free4.png"><img alt="../_images/hosted_chef_free4.png" src="../_images/hosted_chef_free4.png" style="width: 860.0px;" /></a>
+</div></blockquote>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="../chef101/so_what_is_chef.html">それで！ Chefを一言で？！</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../workstation_install/index.html">Workstationの設定</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

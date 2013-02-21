@@ -1,0 +1,67 @@
+●Cassandraのクラスタ構成
+	・使用するCassandraは1.1.9
+	・以下の3台のマシンでクラスタを構成する
+		・PC1（マスター）
+			- privateIP：10.3.3.2
+		・PC2
+			- privateIP：10.3.3.3
+		・PC3
+			- privateIP：10.3.3.4
+	・PC1のinitial_token:に11111など適当なトークンを設定する。（0～2^127-1でクラスター内で一意になっていればよい。）
+	・PC1のlisten_addressに10.3.3.2（自分のIPを設定する。）
+	・PC1のrpc_addressを0.0.0.0を設定する。（すべて通す設定。実際には適切に設定するべき。）
+	・PC1のseedsに - seeds: "10.3.3.2"を設定する。マスターのアドレスを設定する。
+
+	・PC2のinitial_token:に22222など適当なトークンを設定する。（0～2^127-1でクラスター内で一意になっていればよい。）
+	・PC2のlisten_addressに10.3.3.3（自分のIPを設定する。）
+	・PC2のrpc_addressを0.0.0.0を設定する。（すべて通す設定。実際には適切に設定するべき。）
+	・PC2のseedsに - seeds: "10.3.3.2"を設定する。（マスターのアドレスを設定する。）
+
+	・PC3のinitial_token:に3333など適当なトークンを設定する。（0～2^127-1でクラスター内で一意になっていればよい。）
+	・PC3のlisten_addressに10.3.3.4（自分のIPを設定する。）
+	・PC3のrpc_addressを0.0.0.0を設定する。（すべて通す設定。実際には適切に設定するべき。）
+	・PC3のseedsに - seeds: "10.3.3.2"を設定する。（マスターのアドレスを設定する。）
+	★トークンは設定ファイルに書いただけでは変更されない。
+		●各ノードで以下を実行
+			・nodetool move <new token>
+	★ClasterNameは設定ファイルを買い換えただけではダメ。設定ファイルとsystemテーブルの名前が一致しないエラーが出る。
+		Cassandra says "ClusterName mismatch: oldClusterName != newClusterName" and refuses to start
+
+		To prevent operator errors, Cassandra stores the name of the cluster in its system table. If you need to rename a cluster for some reason, you can:
+
+		Perform these steps on each node:
+
+		Start the cassandra-cli connected locally to this node.
+		Run the following:
+		use system;
+		set LocationInfo[utf8('L')][utf8('ClusterName')]=utf8('<new cluster name>');
+		exit;
+		Run nodetool flush on this node.
+		Update the cassandra.yaml file for the cluster_name as the same as 2b).
+		Restart the node.
+		Once all nodes have been had this operation performed and restarted, nodetool ring should show all nodes as UP.
+	★トークンの値を適当に設定すると、ring内での分散がバランスよく行われない。
+	　バランスが良いトークンを生成するには以下のようなスクリプト（python）を使って
+	　トークンを算出する必要がある。
+	　（出典：http://wiki.apache.org/cassandra/GettingStarted）
+	　# Number of nodes in the cluster
+	　num_node = 4
+	　for n in range(num_node):
+    　	print int(2**127 / num_node * n)
+    　
+    　4ノード
+    　0
+    　42535295865117307932921825928971026432
+    　85070591730234615865843651857942052864
+    　127605887595351923798765477786913079296
+	　3ノード
+	　0
+	　56713727820156410577229101238628035242
+	　113427455640312821154458202477256070484
+	　2ノード
+	　0
+	　85070591730234615865843651857942052864
+	★リングからノードを削除する場合は、削除したいノード上で以下を実行
+		nodetool <削除したいノードのIP> discommission
+	★リングに一度追加して削除した後に、再度追加する
+		・cassandraを再起動する

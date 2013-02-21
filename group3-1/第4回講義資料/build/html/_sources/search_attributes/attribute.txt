@@ -1,0 +1,137 @@
+Attributesの検索の結果をmotdに反映するrecipeの作成
+=======================================================
+
+先ほど利用したj-motdにファイルを追加することで、改良を加えてきます。
+
+  .. code-block:: console
+
+    $ cd /root/chef-repo
+    $ vi site-cookbooks/j-mod/recipe/use_attribute.rb
+
+下記の内容を記述します。
+
+  .. code::
+
+    #
+    # Cookbook Name:: j-motd
+    # Recipe:: use_attribute
+    #
+    # Copyright 2012, YOUR_COMPANY_NAME
+    #
+    # All rights reserved - Do Not Redistribute
+    #
+
+    template "/etc/motd.tail" do
+      source "motd.tail.erb"
+      mode "0644"
+      variables({
+        :x_men => node[:chef_handson]
+      })
+    end
+
+次に、rubyのテンプレートを記述します。
+
+  .. code-block:: console
+
+    $ vi site-cookbooks/j-motd/templates/default/motd.tail.erb
+
+以下の内容を記述していきます。
+
+  .. code::
+
+      ______   .______     _______.  ______   ______    _______   _______ 
+     /  __  \  |   _  \   /       | /      | /  __  \  |       \ |   ____|
+    |  |  |  | |  |_)  | |   (----`|  ,----'|  |  |  | |  .--.  ||  |__
+    |  |  |  | |   ___/   \   \    |  |     |  |  |  | |  |  |  ||   __|
+    |  `--'  | |  |   .----)   |   |  `----.|  `--'  | |  '--'  ||  |____ 
+     \______/  |__|   |_______/     \______| \______/  |_______/ |_______|
+                                                           
+
+    Modified by jhotta@creationline. Inc. 
+
+    YOU ARE LOGED IN AS: <%= node[:current_user] %>  
+    This will be an extra attribute that show in the handson <%= @x_men %>
+
+|
+
+  .. note::
+
+    - erbの中から、node.objectに対して直接検索を書けることもきます。
+    - recpieの中で検索し、結果をvariablesでerbに引き渡すこともできます。
+
+Chef Serverに向けて、cookbookを再度uploadします。
+
+  .. code-block:: console
+
+    $ knife coookbook upload j-motd
+
+
+
+ここで、run_listに変更を加えます。
+
+  .. code-block:: console
+
+    $ knife node show jay-server211
+    $ knife node run_list remove jay-server211 "recipe[j-motd]"
+    $ knife node show jay-server211
+    $ knife node run_list add jay-server211 "recipe[j-motd::use_attribute]"
+    $ knife node show jay-server211
+
+
+node.objectを直接変更する場合は、下記の様に行います。
+
+  .. warning::
+
+    node.objectの手動での変更は、実際の運用では絶対にやめてください。
+
+  .. code-block:: console
+
+    $ EDITOR=vi knife node edit [起動しているnode名]
+
+以下の様に、node.objectを変更します。
+
+  .. code-block:: json
+
+    {
+      "name": "起動時につけた名前",
+      "chef_environment": "_default",
+      "normal": {
+        "tags": [
+
+        ],
+        "chef_client": {
+          "bin": "/usr/bin/chef-client"
+        },
+        "chef_handson": "表示したい名前"
+      },
+      "run_list": [
+        "recipe[chef-client]",
+        "recipe[j-motd::use_attribute]"
+      ]
+    }
+
+
+ターゲットのnodeで、chef-clientを実行してみます。
+
+  .. code-block:: console
+
+    $ ssh root@[インスタンスIP]
+    $ sudo chef-client
+
+一度exitし、nodeに再度loginすると下記の様に表示されます。
+
+  .. code::
+
+      ______   .______     _______.  ______   ______    _______   _______ 
+     /  __  \  |   _  \   /       | /      | /  __  \  |       \ |   ____|
+    |  |  |  | |  |_)  | |   (----`|  ,----'|  |  |  | |  .--.  ||  |__
+    |  |  |  | |   ___/   \   \    |  |     |  |  |  | |  |  |  ||   __|
+    |  `--'  | |  |   .----)   |   |  `----.|  `--'  | |  '--'  ||  |____ 
+     \______/  |__|   |_______/     \______| \______/  |_______/ |_______|
+                                                                 
+    
+    Modified by jhotta@creationline. Inc. 
+
+    YOU ARE LOGED IN AS: ubuntu
+    
+    This will be an extra attribute that show in the handson "表示したい名前"

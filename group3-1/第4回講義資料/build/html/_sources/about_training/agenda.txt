@@ -1,0 +1,23 @@
+研修のアジェンダ
+=====================================
+
+  * **仮想化やクラウド化で何が変わった？**
+  * **問題解決への取り組み**
+  * **自動化の中身を見てみると**
+  * **Chef ServerとClient & Nodeの関係*
+  * **Opscode Chef利用のメリット**
+  * **重要コンセプトと単語**
+  * **それで！ Chefを一言で？！**
+  * **Hosted Chef Serverへのユーザー登録**
+  * **Workstationの設定**
+  * **knife-eucaのインストールと設定**
+  * **Chef Nodeを操作**
+  * **recipeの基本**
+  * **recipeでmotdを操作してみる**
+  * **Attributesの検索の結果をmotdに反映するrecipeの作成**
+  * **Data bagを使ったAttributeの設定**
+  * **node objectの内容の検索**
+  * **node objectの編集とrun_listの調整**
+  * **べき等性の確認**
+  * **Q&A time**
+

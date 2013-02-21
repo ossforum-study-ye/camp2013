@@ -1,0 +1,37 @@
+=~=~=~=~=~=~=~=~=~=~=~= PuTTY log 2013.01.28 14:58:00 =~=~=~=~=~=~=~=~=~=~=~=
+login as: root
+Authenticating with public key "imported-openssh-key"
+Last login: Fri Sep 28 00:51:10 2012 from 136.187.36.110
+-bash-3.2# 
+-bash-3.2# 
+-bash-3.2# rpm -qapasswd root
+Changing password for user root.
+New UNIX password: 
+BAD PASSWORD: it is based on a dictionary word
+Retype new UNIX password: 
+passwd: all authentication tokens updated successfully.
+-bash-3.2# vi /etc/sysconfig/network
+"/etc/sysconfig/network" "/etc/sysconfig/network" 1L, 15CNETWORKING=yes
+~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               ~                                                                               -- INSERT --NETWORKING=yesOHSTHOSTNAME=riat13rialkbb:wq"/etc/sysconfig/network" "/etc/sysconfig/network" 2L, 30C written
+-bash-3.2# /etc/init.d/network restart
+Shutting down interface eth0:  [  OK  ]
+Shutting down loopback interface:  [  OK  ]
+Bringing up loopback interface:  [  OK  ]
+Bringing up interface eth0:  
+Determining IP information for eth0... done.
+[  OK  ]
+-bash-3.2# 
+-bash-3.2# 
+-bash-3.2# 
+-bash-3.2# -bash-3.2# -bash-3.2# df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/sda1             8.9G  4.0G  4.5G  47% /
+/dev/sda2              31G  177M   29G   1% /mnt
+-bash-3.2# cdcd dfmount
+/dev/sda1 on / type ext3 (rw,errors=remount-ro)
+proc on /proc type proc (rw)
+devpts on /dev/pts type devpts (rw,gid=5,mode=620)
+/dev/sda2 on /mnt type ext3 (rw)
+none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)
+-bash-3.2# exit
+logout

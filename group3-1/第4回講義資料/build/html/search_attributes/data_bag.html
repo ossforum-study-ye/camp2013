@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Data bagを使ったAttributeの設定 &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="../index.html" />
+    <link rel="prev" title="Attributesの検索の結果をmotdに反映するrecipeの作成" href="attribute.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>Data bagを使ったAttributeの設定</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="attribute.html">Attributesの検索の結果をmotdに反映するrecipeの作成</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="data-bagattribute">
+<h1>Data bagを使ったAttributeの設定<a class="headerlink" href="#data-bagattribute" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<div class="section" id="data-bag">
+<h2>Data bagのカタログを作ります。<a class="headerlink" href="#data-bag" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Chef serverにhandzonに関するAttributeを収納するためのカタログを作ります。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife data bag create handzon
+</pre></div>
+</div>
+</div></blockquote>
+<p>現在の中身を確認してみます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife data bag list
+<span class="gp">$</span> knife data bag show handzon
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h2>Data bagの中身のデータを作成します。<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>まずは、１つ目のjson dataを作成します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ~/chef-repo/data_bag
+<span class="gp">$</span> mkdir default
+<span class="gp">$</span> vi data1.json
+</pre></div>
+</div>
+</div></blockquote>
+<p>ファイルの中身は下記のようになります。</p>
+<blockquote>
+<div><div class="code highlight-python"><div class="highlight"><pre><span class="p">{</span>
+   <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;microsoft&quot;</span><span class="p">,</span>
+   <span class="s">&quot;value&quot;</span><span class="p">:</span> <span class="s">&quot;Bill Gates&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>２つ目のjson dataを作成します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> cp data1.json data2.json
+<span class="gp">$</span> vi data2.json
+</pre></div>
+</div>
+</div></blockquote>
+<p>ファイルの中身は下記のようになります。</p>
+<blockquote>
+<div><div class="code highlight-python"><div class="highlight"><pre><span class="p">{</span>
+   <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;apple&quot;</span><span class="p">,</span>
+   <span class="s">&quot;value&quot;</span><span class="p">:</span> <span class="s">&quot;Steve Jobs&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Data bagに収納されているdataをChef server に登録します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife data bag from file handzon data_bags/default/data1.json
+<span class="gp">$</span> knife data bag from file handzon data_bags/default/data2.json
+<span class="gp">$</span> knife data bag show handzon
+</pre></div>
+</div>
+</div></blockquote>
+<p>下記のように２項目もidが表示されます。</p>
+<blockquote>
+<div><div class="code highlight-python"><div class="highlight"><pre><span class="n">microsoft</span>
+<span class="n">apple</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>更に、Data bagに登録しているデータの中身を詳し見ていきます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife data bag show handzon microsoft
+</pre></div>
+</div>
+</div></blockquote>
+<p>下記の様に表示され内容が確認できます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="go">id:     microsoft</span>
+<span class="go">value:  Bill Gates</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>尚、consoleからdata bagの中身を編集したい場合は下記のコマンドで編集します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nv">EDITOR</span><span class="o">=</span>vi knife data bag edit handzon microsoft
+</pre></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">Data bagに関するこれらの作業は、Guiを使っても同じことができます。</p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="data-bagapachecookbook">
+<h2>Data bagの中身を検索して、Apacheのページの表示が変わるcookbookを作ります。<a class="headerlink" href="#data-bagapachecookbook" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ~/chef-repo/
+<span class="gp">$</span> knife cookbook create mywebapp -o site-cookbooks
+</pre></div>
+</div>
+</div></blockquote>
+<p>default.rbというrecipe編集します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ~/chef-repo/site-cookbooks/mywebapp/recipes
+<span class="gp">$</span> vi default.rb
+</pre></div>
+</div>
+</div></blockquote>
+<p>追記内容は、下記になります。</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>#
+# Cookbook Name:: mywebapp
+# Recipe:: default
+#
+# Copyright 2012, YOUR_COMPANY_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+
+w_stage = search('handzon', 'value:ap*').first
+
+template "/var/www/index2.html" do
+  source "index2.html.erb"
+  mode "0644"
+  variables({
+    :x_men =&gt; data_bag_item('handzon', 'microsoft')['value'],
+    :y_men =&gt; w_stage['value']
+     })
+end</pre>
+</div>
+</div></blockquote>
+<p>index2.html.erbというtemplateを追加します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ~/chef-repo/site-cookbooks/mywebapp/templates/default
+<span class="gp">$</span> vi index2.html.erb
+</pre></div>
+</div>
+</div></blockquote>
+<p>追記内容は、下記に成ります。</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;Test Template&lt;/title&gt;
+  &lt;body&gt;
+    &lt;h1&gt;
+      YOU ARE LOGED IN AS: &lt;%= node[:current_user] %&gt;
+    &lt;/h1&gt;
+    &lt;h3&gt;
+      Useage of Data bag item search: &lt;%= @x_men %&gt;
+      &lt;/br&gt;
+      Useage of search of date bag: &lt;%= @y_men %&gt;
+    &lt;/h3&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+</div>
+</div></blockquote>
+<p>Chef Serverに向けて、cookbookを再度uploadします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife coookbook upload mywebapp
+</pre></div>
+</div>
+</div></blockquote>
+<p>cookbookを取得し、Chef Serverにuploadします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife coookbook site install apache2
+<span class="gp">$</span> knife cookbook upload apache2
+</pre></div>
+</div>
+</div></blockquote>
+<p>roleを設定します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ~/chef-repo/roles
+<span class="gp">$</span> vi mywebapp.rb
+</pre></div>
+</div>
+</div></blockquote>
+<p>追記内容は、下記に成ります。</p>
+<blockquote>
+<div><div class="code highlight-python"><pre>name "mywebapp"
+description "my sample Web App"
+run_list(
+  "recipe[motd]",
+  "recipe[apache2]",
+  "recipe[mywebapp]"
+)</pre>
+</div>
+</div></blockquote>
+<p>roleをChef serverにuploadします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife role create mywebapp
+</pre></div>
+</div>
+</div></blockquote>
+<p>roleが登録されているか確認してみます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife role list
+</pre></div>
+</div>
+</div></blockquote>
+<p>登録したroleの内容を確認してみます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife role show mywebapp
+</pre></div>
+</div>
+</div></blockquote>
+<p>ここで、run_listの整理をしてみます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> knife node run_list remove <span class="s2">&quot;recipe[j-motd::use_attribute]&quot;</span>
+<span class="gp">$</span> knife node run_list add <span class="s2">&quot;role[mywebapp]&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ターゲットのnodeに、再度loginし、chef-clientを実行してみます。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> ssh root@<span class="o">[</span>インスタンスIP<span class="o">]</span>
+<span class="gp">$</span> sudo chef-client
+</pre></div>
+</div>
+</div></blockquote>
+<p>一度logoutして、再度loginしてみる。その後、browserを使ってnodeのIP addressのindex2.htmlを表示してみる。</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p>早く終わっている場合は、index.htmlとindex2.hmlを削除し、再度chef-clientを実行してみる。</p>
+<blockquote class="last">
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> /var/www/
+<span class="gp">$</span> sudo rm index.html
+<span class="gp">$</span> sudo rm inddx2.html
+<span class="gp">$</span> ls
+<span class="gp">$</span> sudo chef-clinet
+<span class="gp">$</span> ls
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="attribute.html">Attributesの検索の結果をmotdに反映するrecipeの作成</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

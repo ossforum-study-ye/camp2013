@@ -1,0 +1,104 @@
+
+http://ossforum-jp-nosql.github.com/hands-on/hands-on.html#3d
+
+
+講座の資料
+https://github.com/nakamasa077/ossforum_openstack/wiki/study_5th
+
+
+１．必須パッケージ（riakインストール前）まで参考
+　http://tech.perlcode.info/entry/20120828/1346157233
+
+
+必要なツールのインストール
+
+　Riakをコンパイルするために必要なツールをyumでインストールします。
+
+yum -y install gcc
+yum -y install gcc-c++
+yum -y install glibc-devel
+yum -y install make
+yum -y install ncurses-devel
+yum -y install openssl-devel
+yum -y install autoconf
+
+Erlangのインストール
+
+　Riakの実行にはErlangというプログラミング言語が必要です。RiakはErlangで書かれているからです。Erlangをソースコードからインストールします。
+
+まずソースコードを落としてくるようのディレクトリに移動。
+
+cd /usr/local/src
+
+　次にErlangをインストール。
+
+wget http://erlang.org/download/otp_src_R15B01.tar.gz
+tar zxvf otp_src_R15B01.tar.gz
+cd otp_src_R15B01
+./configure
+make
+make install
+
+
+30分程度？
+
+２．riakインストール
+
+6分程度
+
+1
+2
+3
+4
+	
+root# cd /usr/local/src
+root# git clone git://github.com/basho/riak.git
+root# cd riak
+root# make rel
+Read more at http://blog.shonanshachu.com/2012/10/awscentosriak.html#5aMmkh6VPSOKbAsG.99
+
+
+30秒程度
+
+インストール参考
+http://voluntas.hatenablog.com/entry/20110410/1302430688
+http://blog.shonanshachu.com/2012/10/awscentosriak.html
+
+
+http://www.ibm.com/developerworks/jp/opensource/library/os-riak1/?cmp=dw&cpb=dwope&ct=dwrss&cr=dwrss&ccy=jp&csr=051112
+
+
+
+sukuriputo 
+
+講習スクリプト
+/tmp/riak_script/hands-on/bin
+./riak-stop-ossforum_0128.sh
+
+/tmp/riak_script/hands-on/bin/riak-stop-ossforum_0128.sh
+
+
+
+RIAK_HOME="/usr/local/src/riak/"
+riak
+
+riakディレクトリ
+/usr/local/src/riak/rel/riak
+
+-bash-3.2# ./riak-admin member-status
+================================= Membership ==================================
+Status     Ring    Pending    Node
+-------------------------------------------------------------------------------
+valid     100.0%      --      'riak@127.0.0.1'
+-------------------------------------------------------------------------------
+Valid:1 / Leaving:0 / Exiting:0 / Joining:0 / Down:0
+
+
+
+
+
+
+alias riak-start='/tmp/riak_script/hands-on/bin/riak-start-ossforum_only0128.sh'
+alias riak-stop='/tmp/riak_script/hands-on/bin/riak-stop-ossforum_0128.sh'
+
+

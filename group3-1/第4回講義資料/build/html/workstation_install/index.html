@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Workstationの設定 &mdash; Opscode Chef 活用セミナー nii-0.1.Dec documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'nii-0.1.Dec',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/theme_extras.js"></script>
+    <link rel="top" title="Opscode Chef 活用セミナー nii-0.1.Dec documentation" href="../index.html" />
+    <link rel="next" title="knife-eucaのインストールと設定" href="../knife_euca/index.html" />
+    <link rel="prev" title="Hosted Chef Serverへのユーザー登録" href="../hosted_chef_register/index.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../index.html">
+          <span>Opscode Chef 活用セミナー nii-0.1.Dec documentation</span></a></h1>
+        <h2 class="heading"><span>Workstationの設定</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        «&#160;&#160;<a href="../hosted_chef_register/index.html">Hosted Chef Serverへのユーザー登録</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../knife_euca/index.html">knife-eucaのインストールと設定</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="workstation">
+<h1>Workstationの設定<a class="headerlink" href="#workstation" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<blockquote>
+<div><div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">使用するソフトウェアの操作方法に置き換えて作業を進めてください。
+sshに関しては、tera term
+scpに関しては、win scp</p>
+</div>
+</div></blockquote>
+<div class="section" id="ssh">
+<h2>起動したインスタンスにsshで接続<a class="headerlink" href="#ssh" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>クライアントソフトから、先に起動したインスタンスのIPアドレスを確認しておきます。</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<ul class="last simple">
+<li>security groupは、ossforum-chefを利用します。</li>
+</ul>
+</div>
+</div></blockquote>
+<p>確認したIPアドレスに対し、sshで接続します。Unix系のOSの場合、下記のようになります。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> ssh ubuntu@<span class="o">[</span>インスタンスIP<span class="o">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">passwordは、 ossforum に設定されています。</p>
+</div>
+</div></blockquote>
+<p>下記のような内容が表示されるはずです。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="go">Welcome to Ubuntu 12.04.1 LTS (GNU/Linux 3.2.0-32-virtual x86_64)</span>
+
+<span class="go"> * Documentation:  https://help.ubuntu.com/</span>
+
+<span class="go">  System information as of Tue Oct 23 03:28:23 UTC 2012</span>
+
+<span class="go">  System load:  0.0               Processes:           59</span>
+<span class="go">  Usage of /:   10.5% of 7.87GB   Users logged in:     0</span>
+<span class="go">  Memory usage: 3%                IP address for eth0: 10.162.15.62</span>
+<span class="go">  Swap usage:   0%</span>
+
+<span class="go">  Graph this data and manage this system at https://landscape.canonical.com/</span>
+
+<span class="go">0 packages can be updated.</span>
+<span class="go">0 updates are security updates.</span>
+
+<span class="go">Get cloud support with Ubuntu Advantage Cloud Guest</span>
+<span class="go">  http://www.ubuntu.com/business/services/cloud</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="chefomnibus-installer">
+<h2>Chef関連のソフトウェアをOmnibus installerでインストール<a class="headerlink" href="#chefomnibus-installer" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> curl -L http://www.opscode.com/chef/install.sh | sudo bash
+</pre></div>
+</div>
+</div></blockquote>
+<p>下記のような出力が出れば、インストール完了です。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="go">Setting up chef (10.16.0-1.ubuntu.11.04) ...</span>
+<span class="go">Thank you for installing Chef!</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<ul class="last simple">
+<li><a class="reference external" href="http://www.opscode.com/chef/install/">Omnibus Installer</a> では、Ubuntu以外のOSにもインストールすることができます。</li>
+<li>Ominubus Installer でインストールした場合は、Chef関連の全てのソフトウェアは/opt/chefにまとめてインストールされます。</li>
+<li>Chef関連のソフトウェアが不要になった場合、/opt/chef以下を削除してください。</li>
+</ul>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="chef">
+<h2>Chef操作のために必要なファイルを保存しておくディレクトリを作成<a class="headerlink" href="#chef" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p>既にgitがインストールされているインスタンスを利用する場合は、下記のapt-getによるgitのインストールは不要です。不明の場合、そのまま実行しても問題ありません。</p>
+<div class="last highlight-console"><div class="highlight"><pre><span class="gp">$</span> sudo apt-get install git-core
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> sudo apt-get install git-core
+<span class="gp">$</span> git clone https://github.com/opscode/chef-repo.git
+</pre></div>
+</div>
+</div></blockquote>
+<p>下記のように、ファイル構成のクローニングできれば完成です。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="go">Cloning into &#39;chef-repo&#39;...</span>
+<span class="go">remote: Counting objects: 199, done.</span>
+<span class="go">remote: Compressing objects: 100% (117/117), done.</span>
+<span class="go">remote: Total 199 (delta 72), reused 160 (delta 49)</span>
+<span class="go">Receiving objects: 100% (199/199), 30.34 KiB, done.</span>
+<span class="go">Resolving deltas: 100% (72/72), done.</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>下記のようなディレクトリが存在していることを確認してください。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="go">.</span>
+<span class="go">+-- chef-repo</span>
+<span class="go">    +-- certificates</span>
+<span class="go">    │   +-- README.md</span>
+<span class="go">    +-- chefignore</span>
+<span class="go">    +-- config</span>
+<span class="go">    │   +-- rake.rb</span>
+<span class="go">    +-- cookbooks</span>
+<span class="go">    │   +-- README.md</span>
+<span class="go">    +-- data_bags</span>
+<span class="go">    │   +-- README.md</span>
+<span class="go">    +-- environments</span>
+<span class="go">    |   +-- README.md</span>
+<span class="go">    +-- Rakefile</span>
+<span class="go">    +-- README.md</span>
+<span class="go">    +-- roles</span>
+<span class="go">        +-- README.md</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="chef-serverworkstation">
+<h2>Chef ServerにWorkstationとして登録するために必要なファイルを設置するディレクトリを作成<a class="headerlink" href="#chef-serverworkstation" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd </span>chef-repo
+<span class="gp">$</span> mkdir .chef
+</pre></div>
+</div>
+</div></blockquote>
+<p>ここまできたら、EC2のインスタンスからログアウトします。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">exit</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h2>インスタンスに対してWorkstationとして必要なファイルを転送<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<blockquote>
+<div><p>Hosted Chefのユーザー登録時に取得した、認証用pemファイルとknifeの環境設定ファイルをインスタンスに転送します。</p>
+<ul class="simple">
+<li>ユーザーの認証用pemファイル</li>
+<li>Organization(組織)の認証用pemファイル</li>
+<li>Organization(組織)のknife.rb</li>
+</ul>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> scp -i hosted_chef_user.pem <span class="se">\</span>
+<span class="go">         ubuntu@[インスタンスIPアドレス]:chef-repo/.chef/</span>
+
+<span class="gp">$</span> scp -i organization-validator.pem <span class="se">\</span>
+<span class="go">         ubuntu@[インスタンスIPアドレス]:chef-repo/.chef/</span>
+
+<span class="gp">$</span> scp -i knife.rb <span class="se">\</span>
+<span class="go">         ubuntu@[インスタンスIPアドレス]:chef-repo/.chef/</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">ノート</p>
+<p class="last">winscpを利用して、同様の内容を得るための操作をしてください。</p>
+</div>
+</div></blockquote>
+<p>Workstationとして動作しているかどうか確認します。先ほどと同じようにsshでインスタンスにアクセスして下記のコマンドを実行します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd </span>chef-repo
+<span class="gp">$</span> knife client list
+</pre></div>
+</div>
+</div></blockquote>
+<p>knife.rbのファイルに記載されている&#8221;validation_client_name&#8221;の値が表示されていることを確認します。</p>
+</div>
+<div class="section" id="sitecookbooks">
+<h2>Site専用のcookbooksの設置ディレクトリの設定<a class="headerlink" href="#sitecookbooks" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>Workstationにsshでアクセスし、knife.rbを編集します。</p>
+<blockquote>
+<div><div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> ssh root@<span class="o">[</span>workstationのインスタンスIP<span class="o">]</span>
+<span class="gp">$</span> vi ~/chef-repo/.chef/knife.rb
+</pre></div>
+</div>
+</div></blockquote>
+<p>cookbook_pathにsite専用のcookbookの設置場所を追記します。</p>
+<blockquote>
+<div><div class="code highlight-python"><div class="highlight"><pre><span class="n">cookbook_path</span> <span class="p">[</span><span class="s">&quot;#{current_dir}/../cookbooks&quot;</span><span class="p">,</span> <span class="s">&quot;#{current_dir}/../site-cookbooks&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        «&#160;&#160;<a href="../hosted_chef_register/index.html">Hosted Chef Serverへのユーザー登録</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">コンテンツ</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="../knife_euca/index.html">knife-eucaのインストールと設定</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2012, Jay Hotta.
+    </div>
+  </body>
+</html>

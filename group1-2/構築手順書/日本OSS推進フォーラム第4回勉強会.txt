@@ -1,0 +1,264 @@
+・メモ
+YCSB:i-44770781
+
+【構築手順】
+***YCSBマシン***
+(1)インスタンスの起動
+m1.xlageにて起動
+セキュリティーグループ 1-2
+
+(2)JDKインストール
+SCPでファイルをアップ http://download.oracle.com/otn-pub/java/jdk/7u11-b21/jdk-7u11-linux-x64.rpm
+# rpm -e jdk ant-1.6.5-2jpp.2
+# rpm -ivh jdk-7u11-linux-x64.rpm
+
+(3)maven
+# wget http://ftp.tsukuba.wide.ad.jp/software/apache/maven/maven-2/2.2.1/binaries/apache-maven-2.2.1-bin.tar.gz
+# mv apache-maven-2.2.1 /opt/.
+# cd /opt
+# ln -s apache-maven-2.2.1 maven2
+
+(4)YCSB
+# git clone https://github.com/brianfrankcooper/YCSB.git YCSB
+# cd /root/YCSB
+・asm-3.1.jarがサイト移動しているらしいので個別にゲット
+# wget http://repo1.maven.org/maven2/asm/asm/3.1/asm-3.1.jar
+# cp asm-3.1.jar /root/.m2/repository/asm/asm/3.1/asm-3.1.jar
+# cat pom.xml
+***
+以下追加
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>9.2</version>
+      <scope>system</scope>
+      <systemPath>/root/YCSB/jdbc/lib/postgresql92-jdbc.jar</systemPath>
+    </dependency>
+***
+# /opt/maven2/bin/mvn clean package
+# cat ~/.bashrc
+***
+export CLASSPATH=/root/YCSB/jdbc/lib/postgresql92-jdbc.jar
+***
+※jdbcは個別にダウンロード
+# yum -y install ruby
+
+(5)Postgresql用ベンチマークツールインストール
+# yum install postgresql-contrib*
+
+***DBサーバ***
+(1)インスタンスの起動
+m1.xlageにて起動
+セキュリティーグループ 1-2
+
+(2)JDK
+# rpm -e jdk
+# rpm -ivh jdk-7u11-linux-x64.rpm
+# cat ~/.bashrc
+***
+export JAVA_HOME="/usr"
+export CASSANDRA_HOME="/opt/cassandra"
+export CASSANDRA_CONF="$CASSANDRA_HOME/conf"
+***
+
+(3)PostgreSQL
+(3-1)インストール
+# wget http://yum.postgresql.org/9.2/redhat/rhel-5-x86_64/pgdg-centos92-9.2-5.noarch.rpm
+# rpm -ivh pgdg-centos92-9.2-5.noarch.rpm
+# wget http://dl.fedoraproject.org/pub/epel/5/x86_64/uuid-1.5.1-3.el5.x86_64.rpm
+# rpm -Uvh uuid-1.5.1-3.el5.x86_64.rpm
+# yum -y install --enablerepo=pgdg92 postgresql92*
+(3-2)起動
+# chkconfig --add postgresql-9.2
+# service postgresql-9.2 initdb
+# service postgresql start
+(3-3)Postgresql用pgbenchインストール
+# yum install postgresql-contrib*
+# su - postgres
+$ createdb postgres
+$ vim /var/lib/pgsgq/pg9.2/data/postgres.conf
+***
+以下修正
+listen_addresses = 'localhost' 
+->
+listen_addresses = '*' 
+***
+$ vim /var/lib/pgsgq/pg9.2/data/pg_hba.conf
+***
+以下修正。YCSBのホストからのNWアクセスを許可
+host    all             all             157.1.148.107/32        trust
+host    all             all             157.1.148.108/32        trust
+host    all             all             10.3.6.0/24             trust
+***
+
+(3)MongoDB
+(3-1)インストール
+# wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.2.2.tgz
+# tar xvf mongodb-linux-x86_64-2.2.2.tgz
+# mkdir /tmp/mongodb
+(3-2)起動
+# /opt/mongodb/bin/mongod --dbpath /tmp/mongodb
+
+(4)Cassandra
+(4-1)インストール
+# wget http://ftp.yz.yamagata-u.ac.jp/pub/network/apache/cassandra/1.2.0/apache-cassandra-1.2.0-bin.tar.gz
+# tar zxvf apache-cassandra-1.2.0-bin.tar.gz
+# mkdir -p /var/lib/cassandra/commitlog
+# mkdir -p /var/lib/cassandra/data
+# mkdir -p /var/log/cassandra
+***
+/opt/cassandra/conf
+listen_address: localhost
+->
+listen_address: 0.0.0.0
+***
+(4-2)起動
+# /opt/cassandra/bin/cassandra
+(4-3)
+# cassandra-cli
+***
+connect localhost/9160;
+show keyspaces;
+create keyspace usertable;
+use usertable;
+create column family data with comparator = UTF8Type;
+***
+(5)環境
+# vi ~/.bashrc
+***
+export JAVA_HOME="/usr"
+export CASSANDRA_HOME="/opt/cassandra"
+export CASSANDRA_CONF="$CASSANDRA_HOME/conf"
+***
+# source ~/.bashrc
+
+【ベンチマーク手順】
+・MongoDB
+(1)DB起動
+# /opt/mongodb/bin/mongod --dbpath /tmp/mongodb
+(2)DB計測
+(2-1)実行
+for `a~fで実行、recordcount 10000,100000,1000000でマトリクス実行`#1000000は時間の都合により省略
+do
+# ./bin/ycsb load mongodb -s -P workloads/workloada -p mongodb.url="10.3.6.2" -p recordcount=10000 > mongodb_a_10000.txt
+※createdb不要
+done
+※mongodb shell確認手順
+# /opt/mongodb/bin/mongo
+***
+> show dbs;
+local   (empty)
+ycsb    0.203125GB
+> db.usertable.count();
+> db.usertable.remove();
+***
+
+・Cassandra
+(1)DB起動
+# /opt/cassandra/bin/cassandra -f
+(2)DB計測
+(2-1)データ計測
+for `a~fで実行、recordcount 10000,100000,1000000でマトリクス実行`#1000000は時間の都合により省略
+do
+# ./bin/ycsb load cassandra-7 -s -P workloads/workloada -p hosts="10.3.6.2" -p recordcount=10000
+
+・PostgreSql
+(1)DB起動
+# service postgresql start
+(2)DB計測
+(2-1)データロード
+# ./bin/ycsb load jdbc -s -P workloads/workloada -P /root/YCSB/jdbc/src/main/conf/db.properties
+***
+jdbc.driver=org.postgresql.Driver
+#jdbc.driver=org.mysql.jdbc.Driver
+# jdbc.fetchsize=20
+db.url=jdbc:postgresql://10.3.6.2:5432/ycsb
+db.user=postgres
+db.passw=postgres
+***
+for `a~fで実行、recordcount 10000,100000,1000000でマトリクス実行`#1000000は時間の都合により省略
+do
+# ./bin/ycsb load jdbc -s -P workloads/workloada -P /root/YCSB/jdbc/src/main/conf/db.properties -p recordcount=10000 > postgres_a_10000.txt
+$ psql yscb -c "delete * from usertable"
+done
+
+【レプリケーション用設定】
+・MongoDB
+・Cassandra
+・PostgreSql
+# vim /var/lib/pgsgq/pg9.2/data/postgres.conf
+***
+hot_standby = on 
+wal_level = hot_standby
+max_wal_sender = 5
+archive_mode = off
+wal_keep_segments = 8 
+***
+# service postgresql restart
+
+【朱峰さんベンチマークスクリプト測定】
+(0)追加構築手順
+・YCSB
+Postgresql9.2インストール手順の実施
+以下パッケージ追加インストール
+# yum -y install git
+# yum -y install make
+# yum -y install gcc
+# yum -y install gcc-c++
+# yum -y install zlib-devel
+# yum -y install openssl-devel
+# yum -y install httpd-devel
+# yum -y install curl
+# yum -y install curl-devel
+# yum -y install readline-devel
+# yum -y install tk-devel
+# yum --enablerepo=epel -y install libyaml-devel
+# yum remove ruby
+# wget ftp://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p194.tar.gz
+# ll
+# tar zxvf ruby-1.9.3-p194.tar.gz
+# cd ruby-1.9.3-p194
+# ./configure --prefix=/usr
+# make && make install
+・Postgres用ライブラリ
+# gem install pg -- --with-pg-config=/usr/pgsql-9.2/bin/pg_config
+・Mongodb用ライブラリ
+# gem install mongodb
+# gem install bson_ext
+
+(1)スキーマ作成
+・MongoDB
+シェルの起動
+# /opt/mongodb/bin/mongo
+***オペメモ
+$ db.user.save({id:"user001", 
+    content : "tweet001",
+    in_reply : "",
+    user_id : "1"
+})
+db.users.insert( {     id: "user001",     content: "tweet001",     in_reply:  ,user_id:1 } )
+db.users.insert( {     id: "user002",     content: "tweet002",     in_reply: ObjectId(""5107556a5b3b819161736d46"") ,user_id:2 } )
+***
+
+・Cassandra
+・PostgreSql
+# su - postgres
+$ createdb twitter
+$ psql twitter < pg.sql
+***pg.sql***
+create table users (id integer primary key, name varchar(255));
+create table tweets (id integer primary key, content varchar(255), in_reply integer references tweets(id));
+************
+
+(2)実行
+・MongoDB
+・Cassandra
+# cassandra-cli
+***
+show keyspaces;
+create keyspace usertable;
+use usertable;
+create column family data with comparator = UTF8Type;
+***
+・PostgreSql
+# ruby pg.rb

@@ -1,0 +1,41 @@
+http://d.hatena.ne.jp/rx7/20120910/p1
+
+
+
+-bash-3.2# chef-client -W
+[2013-01-29T11:34:44+09:00] WARN: Forcing formatter of 'doc' to capture whyrun output.
+Starting Chef Client, version 10.18.2
+[2013-01-29T11:34:44+09:00] INFO: *** Chef 10.18.2 ***
+[2013-01-29T11:34:45+09:00] INFO: Run List is [role[test]]
+[2013-01-29T11:34:45+09:00] INFO: Run List expands to [erlang]
+[2013-01-29T11:34:45+09:00] INFO: Starting Chef Run for client2
+[2013-01-29T11:34:45+09:00] INFO: Running start handlers
+[2013-01-29T11:34:45+09:00] INFO: Start handlers complete.
+resolving cookbooks for run list: ["erlang"]
+[2013-01-29T11:34:45+09:00] INFO: Loading cookbooks [erlang, yum]
+Synchronizing Cookbooks:
+  - yum
+  - erlang
+Compiling Cookbooks...
+Converging 5 resources
+Recipe: yum::epel
+  * remote_file[/var/chef/cache/epel-release-5-4.noarch.rpm] action create[2013-01-29T11:34:45+09:00] INFO: Processing remote_file[/var/chef/cache/epel-release-5-4.noarch.rpm] action create (yum::epel line 26)
+ (skipped due to not_if)
+  * rpm_package[epel-release] action nothing[2013-01-29T11:34:47+09:00] INFO: Processing rpm_package[epel-release] action nothing (yum::epel line 32)
+ (skipped due to only_if)
+  * file[epel-release-cleanup] action delete[2013-01-29T11:34:47+09:00] INFO: Processing file[epel-release-cleanup] action delete (yum::epel line 38)
+ (up to date)
+Recipe: erlang::default
+  * yum_repository[EPELErlangrepo] action add[2013-01-29T11:34:47+09:00] INFO: Processing yum_repository[EPELErlangrepo] action add (erlang::default line 29)
+
+    * Whyrun not supported for yum_repository[EPELErlangrepo], bypassing load. (Skipped: whyrun not supported by provider Chef::Provider::YumRepository)
+ (up to date)
+  * package[erlang] action install[2013-01-29T11:34:47+09:00] INFO: Processing package[erlang] action install (erlang::default line 36)
+ (up to date)
+[2013-01-29T11:34:50+09:00] WARN: In whyrun mode, so NOT performing node save.
+[2013-01-29T11:34:50+09:00] INFO: Chef Run complete in 4.719926 seconds
+[2013-01-29T11:34:50+09:00] INFO: Removing cookbooks/yum/templates/default/repo.erb from the cache; it is no longer needed by chef-client.
+[2013-01-29T11:34:50+09:00] INFO: Running report handlers
+[2013-01-29T11:34:50+09:00] INFO: Report handlers complete
+Chef Client finished, 0 resources would have been updated
+-bash-3.2#

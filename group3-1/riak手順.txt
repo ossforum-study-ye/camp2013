@@ -1,0 +1,96 @@
+# ノードの追加
+
+-bash-3.2# riak-admin join -f riak@10.3.2.68
+Attempting to restart script through sudo -H -u riak
+Sent join request to riak@10.3.2.68
+
+-bash-3.2# riak-admin member_status
+Attempting to restart script through sudo -H -u riak
+================================= Membership ==================================
+Status     Ring    Pending    Node
+-------------------------------------------------------------------------------
+valid      34.4%      --      'riak@10.3.2.68'
+valid      32.8%      --      'riak@10.3.2.70'
+valid      32.8%      --      'riak@10.3.2.71'
+-------------------------------------------------------------------------------
+Valid:3 / Leaving:0 / Exiting:0 / Joining:0 / Down:0
+
+# basho-benchの追加
+
+-bash-3.2# git clone git://github.com/basho/basho_bench.git
+Cloning into basho_bench...
+remote: Counting objects: 1625, done.
+remote: Compressing objects: 100% (715/715), done.
+remote: Total 1625 (delta 954), reused 1525 (delta 864)
+Receiving objects: 100% (1625/1625), 1.05 MiB | 401 KiB/s, done.
+Resolving deltas: 100% (954/954), done.
+-bash-3.2# cd basho_bench
+
+## make実行しようとするとエラー
+-bash-3.2# make
+./rebar get-deps
+/usr/bin/env: escript: No such file or directory
+make: *** [deps] Error 127
+
+## PATHに追加して、再実行するも、エラー
+-bash-3.2# export PATH=$PATH:/usr/lib64/riak/erts-5.9.1/bin/
+-bash-3.2# make
+./rebar get-deps
+==> basho_bench (get-deps)
+Uncaught error in rebar_core: {error,
+                                  {erl_interface,include,
+                                      "code:lib_dir(erl_interface)is unable to find the erl_interface library."}}
+make: *** [deps] Error 1
+
+## Erlangをインストールしてみる。エラー
+-bash-3.2# yum install erlang
+-bash-3.2# make
+./rebar get-deps
+Uncaught error in rebar_core: {'EXIT',
+                                  {undef,
+                                      [{erlang,min,[0,3]},
+                                       {rebar_log,valid_level,1},
+                                       {rebar_log,init,0},
+                                       {rebar,run_aux,1},
+                                       {rebar,main,1},
+                                       {escript,run_code,2},
+                                       {escript,start,1},
+                                       {init,start_it,1}]}}
+make: *** [deps] Error 1
+
+## basho benchのgithubを眺めているとR13B03が必要だが、yumで入れるとR12B05が入るのがエラーの原因かと思われる
+
+## せっかくなので、chefから入れてみる
+
+# Chef Serverで実行
+knife node run_list add client3 erlang
+
+run_list:
+    role[test2]
+    recipe[erlang]
+
+# Chef Clientで実行すると、erlang-R14B-04.1.el5がインストールされる。
+chef-client
+
+# そして、makeも成功した。
+
+## Basho bench
+
+make resultに失敗
+
+vi priv/summary.r
+1行目を、
+#!/usr/bin/Rscript --vanilla
+に変更するとよい。
+
+###### 小ネタ ######
+
+実在しないrecipeやcookbookを登録することが可能
+(もちろん実行時エラー)
+
+root@localhost:/var/chef-repo/cookbooks# knife node run_list add client3 "recipe[hogehoge]"
+
+root@localhost:/var/chef-repo/cookbooks# knife node show client3 -r
+run_list:  recipe[hogehoge]
+
+

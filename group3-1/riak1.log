@@ -1,0 +1,177 @@
+[2013-01-29T13:34:24+09:00] WARN: Forcing formatter of 'doc' to capture whyrun output.
+Starting Chef Client, version 10.18.2
+[2013-01-29T13:34:24+09:00] INFO: *** Chef 10.18.2 ***
+[2013-01-29T13:34:25+09:00] INFO: Run List is [role[test2]]
+[2013-01-29T13:34:25+09:00] INFO: Run List expands to [riak]
+[2013-01-29T13:34:25+09:00] INFO: Starting Chef Run for client10
+[2013-01-29T13:34:25+09:00] INFO: Running start handlers
+[2013-01-29T13:34:25+09:00] INFO: Start handlers complete.
+resolving cookbooks for run list: ["riak"]
+[2013-01-29T13:34:25+09:00] INFO: Loading cookbooks [riak]
+Synchronizing Cookbooks:
+  - riak
+Compiling Cookbooks...
+[2013-01-29T13:34:25+09:00] WARN: Setting attributes without specifying a precedence is deprecated and will be
+removed in Chef 11.0. To set attributes at normal precedence, change code like:
+`node["key"] = "value"` # Not this
+to:
+`node.set["key"] = "value"` # This
+
+Called from:
+  /var/chef/cache/cookbooks/riak/recipes/default.rb:41:in `from_file'
+  /usr/lib64/ruby/gems/1.8/gems/chef-10.18.2/bin/../lib/chef/cookbook_version.rb:558:in `load_recipe'
+  /usr/lib64/ruby/gems/1.8/gems/chef-10.18.2/bin/../lib/chef/mixin/language_include_recipe.rb:46:in `load_recipe'
+
+Converging 8 resources
+Recipe: riak::default
+  * group[riak] action create[2013-01-29T13:34:25+09:00] INFO: Processing group[riak] action create (riak::default line 58)
+
+    - Would create group[riak]
+  * user[riak] action create[2013-01-29T13:34:25+09:00] INFO: Processing user[riak] action create (riak::default line 60)
+
+    - Would create user user[riak]
+  * remote_file[/var/chef/cache/riak-1.2.1-1.el5.x86_64.rpm] action create[2013-01-29T13:34:25+09:00] INFO: Processing remote_file[/var/chef/cache/riak-1.2.1-1.el5.x86_64.rpm] action create (riak::default line 67)
+
+    - Would copy file downloaded from http://s3.amazonaws.com/downloads.basho.com/riak/1.2/1.2.1/rhel/5/riak-1.2.1-1.el5.x86_64.rpm into /var/chef/cache/riak-1.2.1-1.el5.x86_64.rpm
+        (file sizes exceed 10000000 bytes, diff output suppressed)
+    - Would change mode from '' to '0644'
+    - Would change owner from '' to 'root'
+  * package[riak-1.2.1-1.el5.x86_64.rpm] action install[2013-01-29T13:34:41+09:00] INFO: Processing package[riak-1.2.1-1.el5.x86_64.rpm] action install (riak::default line 77)
+
+    * Package riak-1.2.1-1.el5.x86_64.rpm not found: /var/chef/cache/riak-1.2.1-1.el5.x86_64.rpm
+    * Assuming package riak-1.2.1-1.el5.x86_64.rpm would have been made available.
+    * Unable to determine current version due to RPM failure. Detail: nil
+    * Assuming current version would have been determined for packageriak-1.2.1-1.el5.x86_64.rpm.
+    * No version specified, and no candidate version available for riak-1.2.1-1.el5.x86_64.rpm
+    * Assuming a repository that offers riak-1.2.1-1.el5.x86_64.rpm would have been configured
+    - Would install  package riak-1.2.1-1.el5.x86_64.rpm
+  * directory[/etc/riak] action create[2013-01-29T13:34:41+09:00] INFO: Processing directory[/etc/riak] action create (riak::default line 106)
+
+    - Would create new directory /etc/riak
+    - Would change mode from '' to '0755'
+    - Would change owner from '' to 'root'
+  * file[/etc/riak/app.config] action create[2013-01-29T13:34:41+09:00] INFO: Processing file[/etc/riak/app.config] action create (riak::default line 112)
+
+    * Parent directory /etc/riak does not exist.
+    * Assuming directory /etc/riak would have been created
+    - Would create new file /etc/riak/app.config with content checksum 907fca
+        --- /tmp/chef-tempfile20130129-7405-9zzbmu-0	2013-01-29 13:34:41.000000000 +0900
+        +++ /tmp/chef-diff20130129-7405-1gcmnfz-0	2013-01-29 13:34:41.000000000 +0900
+        @@ -0,0 +1,84 @@
+        +[
+        +	{bitcask, [
+        +		{data_root, "/var/lib/riak/bitcask"}
+        +	]},
+        +	{kernel, [
+        +		{inet_dist_listen_max, 7999},
+        +		{inet_dist_listen_min, 6000}
+        +	]},
+        +	{lager, [
+        +		{crash_log, "/var/log/riak/crash.log"},
+        +		{crash_log_count, 5},
+        +		{crash_log_date, "$D0"},
+        +		{crash_log_msg_size, 65536},
+        +		{crash_log_size, 10485760},
+        +		{error_logger_redirect, true},
+        +		{handlers, [
+        +			{lager_file_backend, [
+        +				{"/var/log/riak/error.log", error, 10485760, "$D0", 5},
+        +				{"/var/log/riak/console.log", info, 10485760, "$D0", 5}
+        +			]}
+        +		]}
+        +	]},
+        +	{merge_index, [
+        +		{buffer_rollover_size, 1048576},
+        +		{data_root, "/var/lib/riak/merge_index"},
+        +		{max_compact_segments, 20}
+        +	]},
+        +	{riak_api, [
+        +		{pb_ip, "10.3.2.73"},
+        +		{pb_port, 8087}
+        +	]},
+        +	{riak_control, [
+        +		{admin, true},
+        +		{auth, userlist},
+        +		{enabled, false},
+        +		{userlist, [
+        +			{"user", "pass"}
+        +		]}
+        +	]},
+        +	{riak_core, [
+        +		{dtrace_support, false},
+        +		{handoff_port, 8099},
+        +		{http, [
+        +			{"10.3.2.73", 8098}
+        +		]},
+        +		{platform_bin_dir, "/usr/sbin"},
+        +		{platform_data_dir, "/var/lib/riak"},
+        +		{platform_etc_dir, "/etc/riak"},
+        +		{platform_lib_dir, "/usr/lib64/riak"},
+        +		{platform_log_dir, "/var/log/riak"},
+        +		{ring_creation_size, 64},
+        +		{ring_state_dir, "/var/lib/riak/ring"}
+        +	]},
+        +	{riak_kv, [
+        +		{hook_js_vm_count, 2},
+        +		{http_url_encoding, on},
+        +		{js_max_vm_mem, 8},
+        +		{js_thread_stack, 16},
+        +		{legacy_keylisting, false},
+        +		{listkeys_backpressure, true},
+        +		{map_js_vm_count, 8},
+        +		{mapred_2i_pipe, true},
+        +		{mapred_name, "mapred"},
+        +		{mapred_system, pipe},
+        +		{reduce_js_vm_count, 6},
+        +		{storage_backend, riak_kv_bitcask_backend},
+        +		{vnode_vclocks, true}
+        +	]},
+        +	{riak_search, [
+        +		{enabled, false}
+        +	]},
+        +	{riak_sysmon, [
+        +		{busy_dist_port, true},
+        +		{busy_port, true},
+        +		{gc_ms_limit, 100},
+        +		{heap_word_limit, 40111000},
+        +		{port_limit, 2},
+        +		{process_limit, 30}
+        +	]},
+        +	{sasl, [
+        +		{sasl_error_logger, false},
+        +		{utc_log, true}
+        +	]}
+        +].
+  * file[/etc/riak/vm.args] action create[2013-01-29T13:34:41+09:00] INFO: Processing file[/etc/riak/vm.args] action create (riak::default line 118)
+
+    * Parent directory /etc/riak does not exist.
+    * Assuming directory /etc/riak would have been created
+    - Would create new file /etc/riak/vm.args with content checksum 7fc7ce
+        --- /tmp/chef-tempfile20130129-7405-lbosxw-0	2013-01-29 13:34:41.000000000 +0900
+        +++ /tmp/chef-diff20130129-7405-116zts5-0	2013-01-29 13:34:41.000000000 +0900
+        @@ -0,0 +1,8 @@
+        ++A 64
+        ++K true
+        ++W w
+        +-env ERL_CRASH_DUMP /var/log/riak/erl_crash.dump
+        +-env ERL_FULLSWEEP_AFTER 0
+        +-env ERL_MAX_PORTS 4096
+        +-name riak@10.3.2.73
+        +-setcookie riak
+[2013-01-29T13:34:41+09:00] INFO: file[/etc/riak/vm.args] not queuing delayed action restart on service[riak] (delayed), as it's already been queued
+  * service[riak] action enable[2013-01-29T13:34:41+09:00] INFO: Processing service[riak] action enable (riak::default line 124)
+
+    * service[riak]: unable to locate the init.d script!
+    * Assuming service would be disabled. The init script is not presently installed.
+    - Would enable service service[riak]
+[2013-01-29T13:34:41+09:00] INFO: file[/etc/riak/app.config] sending restart action to service[riak] (delayed)
+  * service[riak] action restart[2013-01-29T13:34:41+09:00] INFO: Processing service[riak] action restart (riak::default line 124)
+
+    * service[riak]: unable to locate the init.d script!
+    * Assuming service would be disabled. The init script is not presently installed.
+    - Would restart service service[riak]
+[2013-01-29T13:34:41+09:00] WARN: In whyrun mode, so NOT performing node save.
+[2013-01-29T13:34:41+09:00] INFO: Chef Run complete in 16.396051 seconds
+[2013-01-29T13:34:41+09:00] INFO: Running report handlers
+[2013-01-29T13:34:41+09:00] INFO: Report handlers complete
+Chef Client finished, 9 resources would have been updated

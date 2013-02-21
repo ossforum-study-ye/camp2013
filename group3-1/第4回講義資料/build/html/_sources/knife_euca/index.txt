@@ -1,0 +1,114 @@
+knife-eucaのインストールと設定
+=========================================
+
+
+gemを使って、knife-eucaをインストール
+-------------------------------------------------------------
+
+  .. note::
+
+  	Omnibus Installerを使ったChefのインストールでは、全てのスクリプトは /opt/chef 以下に配置されます。
+
+Rubyのgem形式で配布されている、knifeの拡張プラグインをコンパイルするためのヘッダーファイルとビルド環境をインストールします。
+
+  .. code-block:: console
+
+      $ sudo apt-get install libxml2-dev libxslt-dev build-essential
+
+準備が整ったら、/opt/chef/embedded/bin/gem を使って、プラグインをインストールします。
+
+  .. code-block:: console
+
+    $ sudo /opt/chef/embedded/bin/gem install knife-eucalyptus \
+           --no-ri \
+           --no-rdoc
+
+下記のようなコメントが出力されれば、インストールは完了です。
+
+  .. code-block:: console
+
+    Gem files will remain installed in /opt/chef/embedded/lib/ruby/gems/1.9.1/gems/nokogiri-1.5.5 for inspection.
+    Results logged to /opt/chef/embedded/lib/ruby/gems/1.9.1/gems/nokogiri-1.5.5/ext/nokogiri/gem_make.out
+
+
+クラウドを使うための設定をknife.rbに追記
+---------------------------------------------------------------
+
+  .. note::
+
+    クラウドクライアントの[設定]>[クラウドクライアント]を選択し、情報を確認してください。
+
+    .. image::
+      ../_static/nii_euca_credential.png
+      :width: 600
+      :scale: 100
+
+
+Workstationにsshでアクセスし、knife.rbを編集します。
+
+  .. code-block:: console
+
+    $ ssh root@[workstationのインスタンスIP]
+    $ vi chef-repo/.chef/knife.rb
+
+
+3項目を追記します。
+
+  .. code::
+
+    # for NII Eucalyptus
+
+    knife[:euca_access_key_id]     = "r4avKouyWjjYAIwcMmJLHw"
+    
+    knife[:euca_secret_access_key] = "CxyNF79TGtGrxJ3jxgKES0MDmuyEK5FTrVLDzA"
+    
+    knife[:euca_api_endpoint] = "http://vclc0013.ecloud.nii.ac.jp:8773/services/Eucalyptus"
+
+  .. note::
+
+    | クラウドクライントから下記うつ際の注意点！
+    | https://   -->  http:// (オレオレ認証証明書への対策)
+    | RDHC       -->  Eucalyptus (独自認証用のサイトをバイパスする対策)
+
+knife-eucalyptusが正しく設定できているか確認してみます。
+
+  .. code-block:: console
+
+    $ ssh root@[workstationのインスタンスIP]
+    $ cd ~/chef-repo
+    $ knife euca flavor list
+    $ knife euca server list
+
+Workstationとして起動したインスタンス情報が表示されれば設定は完了しています。
+
+  .. code-block:: console
+
+    ubuntu@localhost:~/chef-repo$ knife euca flavor list
+    ID           Architecture  RAM         Disk     Cores
+    c1.medium    32-bit        1740.8 MB   350 GB   5
+    c1.xlarge    64-bit        7168 MB     1690 GB  20
+    cc1.4xlarge  64-bit        23552 MB    1690 GB  33.5
+    cc2.8xlarge  64-bit        61952 MB    3370 GB  88
+    cg1.4xlarge  64-bit        22528 MB    1690 GB  33.5
+    hi1.4xlarge  64-bit        61952 MB    2048 GB  35
+    m1.large     64-bit        7680 MB     850 GB   4
+    m1.medium    32-bit        3750 MB     400 GB   2
+    m1.small     32-bit        1740.8 MB   160 GB   1
+    m1.xlarge    64-bit        15360 MB    1690 GB  8
+    m2.2xlarge   64-bit        35020.8 MB  850 GB   13
+    m2.4xlarge   64-bit        70041.6 MB  1690 GB  26
+    m2.xlarge    64-bit        17510.4 MB  420 GB   6.5
+    t1.micro     0-bit         613 MB      0 GB     2
+    ubuntu@localhost:~/chef-repo$
+
+
+  .. code-block:: console
+
+    ubuntu@localhost:~/chef-repo$ knife euca server list
+    Instance ID  Public DNS Name  Flavor     Image         Security Groups  State
+    i-458D07D3   157.1.150.10     c1.medium  emi-19F41435                   running
+    i-31BE06D9   157.1.150.14     c1.medium  emi-1D58145A                   running
+    i-40BA07A6   157.1.150.13     c1.medium  emi-1C55144B                   running
+    i-392407BF   157.1.150.11     m1.xlarge  emi-1C55144B                   running
+    i-4028086C   157.1.150.15     c1.medium  emi-1C55144B                   running
+    ubuntu@localhost:~/chef-repo$

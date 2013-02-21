@@ -1,0 +1,137 @@
+recipeでmotdを操作してみる
+=====================================
+
+motdのcookbookをsite-cookbookディレクトリに作成
+----------------------------------------------------------------
+
+  .. note::
+  	
+  	今回は、cookbookの名前を、j-motdと命名し作業を進めます。この名前は各自自由につけてください。
+
+  .. code-block:: console
+
+    $ cd /root/chef-repo/
+    $ knife coookbook create j-motd -o site-cookbooks
+
+j-motd cookbookのディレクトリに移動します。
+
+  .. code-block:: console
+
+    $ cd ./site-cookbooks/j-motd 
+
+j-motdのディレクトリは、下記のような構成で作成されます。
+
+  .. code::
+
+    .
+    +-- CHANGELOG.md
+    +-- README.md
+    +-- attributes
+    +-- definitions
+    +-- files
+    │   +-- default
+    │       +-- motd.tail
+    +-- libraries
+    +-- metadata.rb
+    +-- providers
+    +-- recipes
+    │   +-- default.rb
+    +-- resources
+    +-- templates
+        +-- default
+
+sshでnodeにログインした時に、コンソールにメッセージを出すためのrecipeを追記します。
+
+  .. code-block:: console
+
+    $ vi ./site-cookbooks/j-motd/recipes/default.rb
+
+追記する内容は、下記の様になります。(コメントアウトされていない４行をコーピーしてください)
+
+  .. code-block:: ruby
+
+    #
+    # Cookbook Name:: j-motd
+    # Recipe:: default
+    #
+    # Copyright 2012, YOUR_COMPANY_NAME
+    #
+    # All rights reserved - Do Not Redistribute
+    #
+
+    cookbook_file "/etc/motd.tail" do
+      source "motd.tail"
+      mode "0644"
+    end
+
+ディレクトリを、files/defaultに移動し、新しくmotd.tailというファイルを設置します。
+
+  .. code-block:: console
+
+    $ cd ./site-cookbook/j-motd/files/default
+    $ vi motd.tail
+
+下記の内容を、コピーしmotd.tailファイルに書き込んでください。
+
+  .. code::
+
+      ______   .______     _______.  ______   ______    _______   _______ 
+     /  __  \  |   _  \   /       | /      | /  __  \  |       \ |   ____|
+    |  |  |  | |  |_)  | |   (----`|  ,----'|  |  |  | |  .--.  ||  |__
+    |  |  |  | |   ___/   \   \    |  |     |  |  |  | |  |  |  ||   __|
+    |  `--'  | |  |   .----)   |   |  `----.|  `--'  | |  '--'  ||  |____ 
+     \______/  |__|   |_______/     \______| \______/  |_______/ |_______|
+                                                                
+    Modified by jhotta@creationline. Inc.
+
+|
+
+  .. note::
+
+    ここまでの作業の解説をします。
+
+    - cookbook_fileというresouce providerで、/etc/motd.tailというファイルを設置します。
+    - motd.tailには、644の権限で作成しす。
+    - 特段パスを指定しない場合、coobook_fileで使用するファイルは、failes/default内に設置します。
+    - motd.tailには、”opscode”と記載されるように記述されいます。
+
+cookbookをChef Serverにuploadします。 
+
+  .. code-block:: console
+
+    $ cd ~/chef-repo
+    $ knife cookbook upload j-motd
+
+upload出来ているcookbookが確認します。
+
+  .. code-block:: console
+
+    $ knife cookbook list
+
+出力結果：
+
+  .. code::
+
+    chef-client       2.0.2
+    j-motd            0.1.0
+
+先ほど、作成したインスタンスのcookbookを登録します。
+
+    .. code-block:: console
+
+      $ knife node run_list add [node名] j-motd
+
+
+ここでインスタンスに、sshでログインしていきます。
+
+  .. code-block:: console
+
+    $ ssh  root@[インスタンスIP]
+    $ sudo chef-client
+
+chef-clientが実行されたことを確認できたら、一度logoutし、再度loginします。
+
+
+  .. code-block:: console
+
+    $ ssh  root@[インスタンスIP]

@@ -1,0 +1,30 @@
+CloudStack APIとの親和性を上げている、Knifeのプラグイン
+=========================================================================
+
+.. note::
+
+	`knife-cloudstack`_
+
+
+.. code-block:: console
+
+	# knife cs              
+	FATAL: Cannot find sub command for: 'cs'
+	Available cs subcommands: (for details, knife SUB-COMMAND --help)
+
+	** CS COMMANDS **
+	knife cs hosts
+	knife cs network list (options)
+	knife cs server create [SERVER_NAME] (options)
+	knife cs server delete SERVER_NAME [SERVER_NAME ...] (options)
+	knife cs server list (options)
+	knife cs server reboot SERVER_NAME [SERVER_NAME ...] (options)
+	knife cs server start SERVER_NAME [SERVER_NAME ...] (options)
+	knife cs server stop SERVER_NAME [SERVER_NAME ...] (options)
+	knife cs service list (options)
+	knife cs stack create JSON_FILE (options)
+	knife cs stack delete JSON_FILE (options)
+	knife cs template list (options)
+	knife cs zone list (options)
+
+.. _`knife-cloudstack`: https://github.com/chiragjog/knife-cloudstack

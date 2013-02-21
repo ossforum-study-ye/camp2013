@@ -1,0 +1,11 @@
+Chef ServerとClient & Nodeの関係 
+=================================================
+
+  .. image::
+    ../_static/chef-archi0.png
+    :width: 860 px
+
+  |
+  
+  * clients = nodes + workstaritons
+  * workstationには、knifeとその機能拡張のrubyCLIがインストールされる

@@ -1,0 +1,255 @@
+Data bagを使ったAttributeの設定
+====================================================
+
+Data bagのカタログを作ります。
+--------------------------------------------
+
+Chef serverにhandzonに関するAttributeを収納するためのカタログを作ります。
+
+  .. code-block:: console
+
+    $ knife data bag create handzon
+
+
+現在の中身を確認してみます。
+
+  .. code-block:: console
+
+    $ knife data bag list
+    $ knife data bag show handzon
+
+
+Data bagの中身のデータを作成します。
+----------------------------------------------
+
+まずは、１つ目のjson dataを作成します。
+
+  .. code-block:: console
+
+    $ cd ~/chef-repo/data_bag
+    $ mkdir default
+    $ vi data1.json
+
+
+ファイルの中身は下記のようになります。
+
+  .. code::
+
+    {
+       "id": "microsoft",
+       "value": "Bill Gates"
+    }
+
+
+２つ目のjson dataを作成します。
+
+  .. code-block:: console
+
+    $ cp data1.json data2.json
+    $ vi data2.json
+
+
+ファイルの中身は下記のようになります。
+
+  .. code::
+
+    {
+       "id": "apple",
+       "value": "Steve Jobs"
+    }
+
+
+Data bagに収納されているdataをChef server に登録します。
+
+  .. code-block:: console
+
+    $ knife data bag from file handzon data_bags/default/data1.json
+    $ knife data bag from file handzon data_bags/default/data2.json
+    $ knife data bag show handzon
+
+
+下記のように２項目もidが表示されます。
+
+  .. code::
+
+    microsoft
+    apple
+
+
+更に、Data bagに登録しているデータの中身を詳し見ていきます。
+
+  .. code-block:: console
+
+    $ knife data bag show handzon microsoft　
+
+
+下記の様に表示され内容が確認できます。
+
+  .. code-block:: console
+
+    id:     microsoft
+    value:  Bill Gates
+
+尚、consoleからdata bagの中身を編集したい場合は下記のコマンドで編集します。
+
+  .. code-block:: console
+
+    $ EDITOR=vi knife data bag edit handzon microsoft
+
+|
+
+  .. note::
+
+    Data bagに関するこれらの作業は、Guiを使っても同じことができます。
+
+
+Data bagの中身を検索して、Apacheのページの表示が変わるcookbookを作ります。
+------------------------------------------------------------------------------------------
+
+  .. code-block:: console
+
+    $ cd ~/chef-repo/
+    $ knife cookbook create mywebapp -o site-cookbooks
+
+
+default.rbというrecipe編集します。
+
+  .. code-block:: console
+
+    $ cd ~/chef-repo/site-cookbooks/mywebapp/recipes
+    $ vi default.rb
+
+追記内容は、下記になります。
+
+  .. code::
+
+    #
+    # Cookbook Name:: mywebapp
+    # Recipe:: default
+    #
+    # Copyright 2012, YOUR_COMPANY_NAME
+    #
+    # All rights reserved - Do Not Redistribute
+    #
+
+    w_stage = search('handzon', 'value:ap*').first
+
+    template "/var/www/index2.html" do
+      source "index2.html.erb"
+      mode "0644"
+      variables({
+        :x_men => data_bag_item('handzon', 'microsoft')['value'],
+        :y_men => w_stage['value']
+         })
+    end
+
+index2.html.erbというtemplateを追加します。
+
+  .. code-block:: console
+
+    $ cd ~/chef-repo/site-cookbooks/mywebapp/templates/default
+    $ vi index2.html.erb
+
+追記内容は、下記に成ります。
+
+  .. code::
+
+    <html>
+      <head><title>Test Template</title>
+      <body>
+        <h1>
+          YOU ARE LOGED IN AS: <%= node[:current_user] %>
+        </h1>
+        <h3>
+          Useage of Data bag item search: <%= @x_men %>
+          </br>
+          Useage of search of date bag: <%= @y_men %>
+        </h3>
+      </body>
+    </html>
+
+
+Chef Serverに向けて、cookbookを再度uploadします。
+
+  .. code-block:: console
+
+    $ knife coookbook upload mywebapp
+
+
+cookbookを取得し、Chef Serverにuploadします。
+
+  .. code-block:: console
+
+    $ knife coookbook site install apache2
+    $ knife cookbook upload apache2
+
+roleを設定します。
+
+  .. code-block:: console
+
+    $ cd ~/chef-repo/roles
+    $ vi mywebapp.rb
+
+追記内容は、下記に成ります。
+
+  .. code::
+
+    name "mywebapp"
+    description "my sample Web App"
+    run_list(
+      "recipe[motd]",
+      "recipe[apache2]",
+      "recipe[mywebapp]"
+    )
+
+roleをChef serverにuploadします。
+
+  .. code-block:: console
+
+    $ knife role create mywebapp
+
+roleが登録されているか確認してみます。
+
+  .. code-block:: console
+
+    $ knife role list
+
+登録したroleの内容を確認してみます。
+
+  .. code-block:: console
+
+    $ knife role show mywebapp
+
+ここで、run_listの整理をしてみます。
+
+  .. code-block:: console
+
+    $ knife node run_list remove "recipe[j-motd::use_attribute]"
+    $ knife node run_list add "role[mywebapp]"
+
+ターゲットのnodeに、再度loginし、chef-clientを実行してみます。
+
+  .. code-block:: console
+
+    $ ssh root@[インスタンスIP]
+    $ sudo chef-client
+
+一度logoutして、再度loginしてみる。その後、browserを使ってnodeのIP addressのindex2.htmlを表示してみる。
+
+
+  .. note:: 
+
+    早く終わっている場合は、index.htmlとindex2.hmlを削除し、再度chef-clientを実行してみる。
+
+      .. code-block:: console
+
+        $ cd /var/www/
+        $ sudo rm index.html
+        $ sudo rm inddx2.html
+        $ ls
+        $ sudo chef-clinet
+        $ ls
+
+
+
+

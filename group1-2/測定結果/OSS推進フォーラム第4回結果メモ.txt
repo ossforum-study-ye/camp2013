@@ -1,0 +1,12 @@
+【結果】
+・YCSB
+
+・rubyスクリプト
+Postgresqlシングル構成
+-bash-3.2# ruby pg.rb
+       user     system      total        real
+add user:  0.000000   0.010000   0.010000 (  3.323645)
+tweet:  0.660000   0.950000   1.610000 (372.308392)
+get_tweet_simple:  0.640000   0.400000   1.040000 (285.819820)
+get_tweet_complex:  0.220000   0.140000   0.360000 (442.398281)
+get_tweet_super_complex:  0.210000   0.080000   0.290000 (608.111591)
